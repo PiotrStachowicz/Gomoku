@@ -230,11 +230,9 @@ int something(int board[BOARD_LENGHT][BOARD_LENGHT], int y, int x){
     return 0;
 }
 int blockandattack(struct stan_gry* stan) {
-    // Sprawdź czy na planszy istnieje rząd trzech O
     for (int y = 0; y < BOARD_LENGHT; y++) {
         for (int x = 0; x < BOARD_LENGHT - 2; x++) {
             if (stan->board[y][x] == 'O' && stan->board[y][x + 1] == 'O' && stan->board[y][x + 2] == 'O') {
-                // Znajdź puste pole obok rzędu O i zagraj tam X
                 if (x > 0 && stan->board[y][x - 1] == 0) {
                     stan->board[y][x - 1] = 'X';
                     stan->gracz = 1;
@@ -248,11 +246,9 @@ int blockandattack(struct stan_gry* stan) {
             }
         }
     }
-    // Sprawdź czy na planszy istnieje kolumna trzech O
     for (int x = 0; x < BOARD_LENGHT; x++) {
         for (int y = 0; y < BOARD_LENGHT - 2; y++) {
             if (stan->board[y][x] == 'O' && stan->board[y + 1][x] == 'O' && stan->board[y + 2][x] == 'O') {
-                // Znajdź puste pole obok kolumny O i zagraj tam X
                 if (y > 0 && stan->board[y - 1][x] == 0) {
                     stan->board[y - 1][x] = 'X';
                     stan->gracz = 1;
@@ -266,12 +262,10 @@ int blockandattack(struct stan_gry* stan) {
             }
         }
     }
-    // Sprawdź czy na planszy istnieje przekątna trzech O
     for (int y = 0; y < BOARD_LENGHT - 2; y++) {
         for (int x = 0; x < BOARD_LENGHT - 2; x++) {
             if (stan->board[y][x] == 'O' && stan->board[y + 1][x + 1] == 'O' &&
                 stan->board[y + 2][x + 2] == 'O') {
-// Znajdź puste pole obok przekątnej O i zagraj tam X
                 if (y > 0 && x > 0 && stan->board[y - 1][x - 1] == 0) {
                     stan->board[y - 1][x - 1] = 'X';
                     stan->gracz = 1;
@@ -285,11 +279,9 @@ int blockandattack(struct stan_gry* stan) {
             }
         }
     }
-// Sprawdź czy na planszy istnieje druga przekątna trzech O
     for (int y = 0; y < BOARD_LENGHT - 2; y++) {
         for (int x = 2; x < BOARD_LENGHT; x++) {
             if (stan->board[y][x] == 'O' && stan->board[y + 1][x - 1] == 'O' && stan->board[y + 2][x - 2] == 'O') {
-                // Znajdź puste pole obok drugiej przekątnej O i zagraj tam X
                 if (y > 0 && x < BOARD_LENGHT - 1 && stan->board[y - 1][x + 1] == 0) {
                     stan->board[y - 1][x + 1] = 'X';
                     stan->gracz = 1;
@@ -304,7 +296,6 @@ int blockandattack(struct stan_gry* stan) {
         }
     }
     //Atak
-    // Sprawdź czy na planszy istnieje rząd trzech O
     for (int y = 0; y < BOARD_LENGHT; y++) {
         for (int x = 0; x < BOARD_LENGHT - 2; x++) {
             if (stan->board[y][x] == 'X' && stan->board[y][x + 1] == 'X' && stan->board[y][x + 2] == 'X') {
@@ -322,11 +313,9 @@ int blockandattack(struct stan_gry* stan) {
             }
         }
     }
-    // Sprawdź czy na planszy istnieje kolumna trzech O
     for (int x = 0; x < BOARD_LENGHT; x++) {
         for (int y = 0; y < BOARD_LENGHT - 2; y++) {
             if (stan->board[y][x] == 'X' && stan->board[y + 1][x] == 'X' && stan->board[y + 2][x] == 'X') {
-                // Znajdź puste pole obok kolumny O i zagraj tam X
                 if (y > 0 && stan->board[y - 1][x] == 0) {
                     stan->board[y - 1][x] = 'X';
                     stan->gracz = 1;
@@ -340,11 +329,9 @@ int blockandattack(struct stan_gry* stan) {
             }
         }
     }
-    // Sprawdź czy na planszy istnieje przekątna trzech O
     for (int y = 0; y < BOARD_LENGHT - 2; y++) {
         for (int x = 0; x < BOARD_LENGHT - 2; x++) {
             if (stan->board[y][x] == 'X' && stan->board[y + 1][x + 1] == 'X' && stan->board[y + 2][x + 2] == 'X') {
-// Znajdź puste pole obok przekątnej O i zagraj tam X
                 if (y > 0 && x > 0 && stan->board[y - 1][x - 1] == 0) {
                     stan->board[y - 1][x - 1] = 'X';
                     stan->gracz = 1;
@@ -358,11 +345,9 @@ int blockandattack(struct stan_gry* stan) {
             }
         }
     }
-// Sprawdź czy na planszy istnieje druga przekątna trzech O
     for (int y = 0; y < BOARD_LENGHT - 2; y++) {
         for (int x = 2; x < BOARD_LENGHT; x++) {
             if (stan->board[y][x] == 'X' && stan->board[y + 1][x - 1] == 'X' && stan->board[y + 2][x - 2] == 'X') {
-                // Znajdź puste pole obok drugiej przekątnej O i zagraj tam X
                 if (y > 0 && x < BOARD_LENGHT - 1 && stan->board[y - 1][x + 1] == 0) {
                     stan->board[y - 1][x + 1] = 'X';
                     stan->gracz = 1;
@@ -386,9 +371,9 @@ int minimax(struct stan_gry* state, bool isMaximizingPlayer,int depth, int alpha
         return 0;
     }
     if (check_winner(state) == 1) {
-        return 100;
+        return 100-depth;
     }else if(check_winner(state)==2){
-        return 100;
+        return depth-100;
     }
     int bestScore = isMaximizingPlayer ? INT_MIN : INT_MAX;
     for (int y = 0; y < BOARD_LENGHT; y++) {
