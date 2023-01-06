@@ -1,5 +1,10 @@
 #include "header.h"
 int main(void){
+    for(int i = 0;i<BOARD_LENGHT;i++){
+        for(int j = 0;j<BOARD_LENGHT;j++){
+            valuable[i][j] = 0;
+        }
+    }
     system("clear");
     struct stan_gry stan = {.koniec = false, .gracz=1};
     print_stan_gry(&stan);
@@ -7,7 +12,9 @@ int main(void){
         if(stan.gracz==1){
             move(&stan);
         } else{
-            best_move(&stan);
+            if(blockandattack(&stan) == 0){
+                best_move(&stan);
+            }
         }
         int k = check_winner(&stan);
         if(k==1){

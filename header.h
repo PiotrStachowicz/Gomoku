@@ -3,10 +3,11 @@
 #include <stdlib.h>
 #include <limits.h>
 #include <math.h>
-#define BOARD_LENGHT 4
+#define BOARD_LENGHT 15
 #define MIN(a,b) (((a)<(b))?(a):(b))
 #define MAX(a,b) (((a)>(b))?(a):(b))
 int counter;
+int valuable[BOARD_LENGHT][BOARD_LENGHT];
 struct stan_gry{
     char board[BOARD_LENGHT][BOARD_LENGHT];
     int gracz;
@@ -67,6 +68,7 @@ void move(struct stan_gry* state){
         }
     } while (true);
     state->board[y-1][x-1] = 'O';
+    valuable[y-1][x-1] = 1;
     state->ruch += 1;
     state->gracz = -1;
     system("clear");
@@ -80,7 +82,7 @@ int check_winner(struct stan_gry* state){
             } else{
                 count = 1;
             }
-            if(count==3){
+            if(count==5){
                 if(state->board[y][x]=='X') return 1;
                 if(state->board[y][x]=='O') return 2;
             }
@@ -94,7 +96,7 @@ int check_winner(struct stan_gry* state){
             } else{
                 count = 1;
             }
-            if(count==3){
+            if(count==5){
                 if(state->board[y][x]=='X') return 1;
                 if(state->board[y][x]=='O') return 2;
             }
@@ -110,7 +112,7 @@ int check_winner(struct stan_gry* state){
             } else{
                 count = 1;
             }
-            if(count==3){
+            if(count==5){
                 if(state->board[ky][x]=='X') return 1;
                 if(state->board[ky][x]=='O') return 2;
             }
@@ -128,7 +130,7 @@ int check_winner(struct stan_gry* state){
             } else{
                 count = 1;
             }
-            if(count==3){
+            if(count==5){
                 if(state->board[y][kx]=='X') return 1;
                 if(state->board[y][kx]=='O') return 2;
             }
@@ -146,7 +148,7 @@ int check_winner(struct stan_gry* state){
             } else{
                 count = 1;
             }
-            if(count==3){
+            if(count==5){
                 if(state->board[y][kx]=='X') return 1;
                 if(state->board[y][kx]=='O') return 2;
             }
@@ -164,7 +166,7 @@ int check_winner(struct stan_gry* state){
             } else{
                 count = 1;
             }
-            if(count==3){
+            if(count==5){
                 if(state->board[y][kx]=='X') return 1;
                 if(state->board[y][kx]=='O') return 2;
             }
@@ -184,79 +186,215 @@ int check_winner(struct stan_gry* state){
         return -1;
     }//remis
 }
-int left(struct stan_gry* state){
-    int left = 0;
-    for(int y = 0;y<BOARD_LENGHT;y++){
-        for(int x = 0;x<BOARD_LENGHT;x++){
-            if(state->board[y][x]==0){
-                left++;
-            }
-        }
-    }
-    return left;
-}
-int evaluate(struct stan_gry* state){
-    ;
-}
-int something(struct stan_gry* state, int y, int x){
+int something(int board[BOARD_LENGHT][BOARD_LENGHT], int y, int x){
     if(x>0){
-        if(state->board[y][x-1]!=0){
+        if(board[y][x-1]!=0){
             return 1;
         }
     }//lewo
     if(x<BOARD_LENGHT-1){
-        if(state->board[y][x+1]!=0){
+        if(board[y][x+1]!=0){
             return 1;
         }
     }//prawo
     if(y<BOARD_LENGHT-1){
-        if(state->board[y+1][x]!=0){
+        if(board[y+1][x]!=0){
             return 1;
         }
     }//dół
     if(y>0){
-        if(state->board[y-1][x]!=0){
+        if(board[y-1][x]!=0){
             return 1;
         }
     }//góra
     if(x>0&&y>0){
-        if(state->board[y-1][x-1]!=0){
+        if(board[y-1][x-1]!=0){
             return 1;
         }
     }//lewy górny
     if(x<BOARD_LENGHT-1&&y<BOARD_LENGHT-1){
-        if(state->board[y+1][x+1]!=0){
+        if(board[y+1][x+1]!=0){
             return 1;
         }
     }//prawy dolny
     if(x>0&&y<BOARD_LENGHT-1){
-        if(state->board[y+1][x-1]!=0){
+        if(board[y+1][x-1]!=0){
             return 1;
         }
     }//lewy dolny
     if(x<BOARD_LENGHT-1&&y>0){
-        if(state->board[y-1][x+1]!=0){
+        if(board[y-1][x+1]!=0){
             return 1;
         }
     }//prawy górny
     return 0;
 }
+int blockandattack(struct stan_gry* stan) {
+    // Sprawdź czy na planszy istnieje rząd trzech O
+    for (int y = 0; y < BOARD_LENGHT; y++) {
+        for (int x = 0; x < BOARD_LENGHT - 2; x++) {
+            if (stan->board[y][x] == 'O' && stan->board[y][x + 1] == 'O' && stan->board[y][x + 2] == 'O') {
+                // Znajdź puste pole obok rzędu O i zagraj tam X
+                if (x > 0 && stan->board[y][x - 1] == 0) {
+                    stan->board[y][x - 1] = 'X';
+                    stan->gracz = 1;
+                    return 1;
+                }
+                if (x < BOARD_LENGHT - 3 && stan->board[y][x + 3] == 0) {
+                    stan->board[y][x + 3] = 'X';
+                    stan->gracz = 1;
+                    return 1;
+                }
+            }
+        }
+    }
+    // Sprawdź czy na planszy istnieje kolumna trzech O
+    for (int x = 0; x < BOARD_LENGHT; x++) {
+        for (int y = 0; y < BOARD_LENGHT - 2; y++) {
+            if (stan->board[y][x] == 'O' && stan->board[y + 1][x] == 'O' && stan->board[y + 2][x] == 'O') {
+                // Znajdź puste pole obok kolumny O i zagraj tam X
+                if (y > 0 && stan->board[y - 1][x] == 0) {
+                    stan->board[y - 1][x] = 'X';
+                    stan->gracz = 1;
+                    return 1;
+                }
+                if (y < BOARD_LENGHT - 3 && stan->board[y + 3][x] == 0) {
+                    stan->board[y + 3][x] = 'X';
+                    stan->gracz = 1;
+                    return 1;
+                }
+            }
+        }
+    }
+    // Sprawdź czy na planszy istnieje przekątna trzech O
+    for (int y = 0; y < BOARD_LENGHT - 2; y++) {
+        for (int x = 0; x < BOARD_LENGHT - 2; x++) {
+            if (stan->board[y][x] == 'O' && stan->board[y + 1][x + 1] == 'O' &&
+                stan->board[y + 2][x + 2] == 'O') {
+// Znajdź puste pole obok przekątnej O i zagraj tam X
+                if (y > 0 && x > 0 && stan->board[y - 1][x - 1] == 0) {
+                    stan->board[y - 1][x - 1] = 'X';
+                    stan->gracz = 1;
+                    return 1;
+                }
+                if (y < BOARD_LENGHT - 3 && x < BOARD_LENGHT - 3 && stan->board[y + 3][x + 3] == 0) {
+                    stan->board[y + 3][x + 3] = 'X';
+                    stan->gracz = 1;
+                    return 1;
+                }
+            }
+        }
+    }
+// Sprawdź czy na planszy istnieje druga przekątna trzech O
+    for (int y = 0; y < BOARD_LENGHT - 2; y++) {
+        for (int x = 2; x < BOARD_LENGHT; x++) {
+            if (stan->board[y][x] == 'O' && stan->board[y + 1][x - 1] == 'O' && stan->board[y + 2][x - 2] == 'O') {
+                // Znajdź puste pole obok drugiej przekątnej O i zagraj tam X
+                if (y > 0 && x < BOARD_LENGHT - 1 && stan->board[y - 1][x + 1] == 0) {
+                    stan->board[y - 1][x + 1] = 'X';
+                    stan->gracz = 1;
+                    return 1;
+                }
+                if (y < BOARD_LENGHT - 3 && x > 1 && stan->board[y + 3][x - 3] == 0) {
+                    stan->board[y + 3][x - 3] = 'X';
+                    stan->gracz = 1;
+                    return 1;
+                }
+            }
+        }
+    }
+    //Atak
+    // Sprawdź czy na planszy istnieje rząd trzech O
+    for (int y = 0; y < BOARD_LENGHT; y++) {
+        for (int x = 0; x < BOARD_LENGHT - 2; x++) {
+            if (stan->board[y][x] == 'X' && stan->board[y][x + 1] == 'X' && stan->board[y][x + 2] == 'X') {
+                // Znajdź puste pole obok rzędu O i zagraj tam X
+                if (x > 0 && stan->board[y][x - 1] == 0) {
+                    stan->board[y][x - 1] = 'X';
+                    stan->gracz = 1;
+                    return 1;
+                }
+                if (x < BOARD_LENGHT - 3 && stan->board[y][x + 3] == 0) {
+                    stan->board[y][x + 3] = 'X';
+                    stan->gracz = 1;
+                    return 1;
+                }
+            }
+        }
+    }
+    // Sprawdź czy na planszy istnieje kolumna trzech O
+    for (int x = 0; x < BOARD_LENGHT; x++) {
+        for (int y = 0; y < BOARD_LENGHT - 2; y++) {
+            if (stan->board[y][x] == 'X' && stan->board[y + 1][x] == 'X' && stan->board[y + 2][x] == 'X') {
+                // Znajdź puste pole obok kolumny O i zagraj tam X
+                if (y > 0 && stan->board[y - 1][x] == 0) {
+                    stan->board[y - 1][x] = 'X';
+                    stan->gracz = 1;
+                    return 1;
+                }
+                if (y < BOARD_LENGHT - 3 && stan->board[y + 3][x] == 0) {
+                    stan->board[y + 3][x] = 'X';
+                    stan->gracz = 1;
+                    return 1;
+                }
+            }
+        }
+    }
+    // Sprawdź czy na planszy istnieje przekątna trzech O
+    for (int y = 0; y < BOARD_LENGHT - 2; y++) {
+        for (int x = 0; x < BOARD_LENGHT - 2; x++) {
+            if (stan->board[y][x] == 'X' && stan->board[y + 1][x + 1] == 'X' && stan->board[y + 2][x + 2] == 'X') {
+// Znajdź puste pole obok przekątnej O i zagraj tam X
+                if (y > 0 && x > 0 && stan->board[y - 1][x - 1] == 0) {
+                    stan->board[y - 1][x - 1] = 'X';
+                    stan->gracz = 1;
+                    return 1;
+                }
+                if (y < BOARD_LENGHT - 3 && x < BOARD_LENGHT - 3 && stan->board[y + 3][x + 3] == 0) {
+                    stan->board[y + 3][x + 3] = 'X';
+                    stan->gracz = 1;
+                    return 1;
+                }
+            }
+        }
+    }
+// Sprawdź czy na planszy istnieje druga przekątna trzech O
+    for (int y = 0; y < BOARD_LENGHT - 2; y++) {
+        for (int x = 2; x < BOARD_LENGHT; x++) {
+            if (stan->board[y][x] == 'X' && stan->board[y + 1][x - 1] == 'X' && stan->board[y + 2][x - 2] == 'X') {
+                // Znajdź puste pole obok drugiej przekątnej O i zagraj tam X
+                if (y > 0 && x < BOARD_LENGHT - 1 && stan->board[y - 1][x + 1] == 0) {
+                    stan->board[y - 1][x + 1] = 'X';
+                    stan->gracz = 1;
+                    return 1;
+                }
+                if (y < BOARD_LENGHT - 3 && x > 1 && stan->board[y + 3][x - 3] == 0) {
+                    stan->board[y + 3][x - 3] = 'X';
+                    stan->gracz = 1;
+                    return 1;
+                }
+            }
+        }
+    }
+    return 0;
+}
 int minimax(struct stan_gry* state, bool isMaximizingPlayer,int depth, int alpha, int beta) {
-    counter++;
-    if(depth == left(state) && (check_winner(state)!=1)){
+    if(depth == 3){
+        return 0;
+    }
+    if(check_winner(state)==-1){
         return 0;
     }
     if (check_winner(state) == 1) {
-        return 1;
+        return 100;
     }else if(check_winner(state)==2){
-        return -1;
-    }else if (check_winner(state) == -1) {
-        return 0;
+        return 100;
     }
     int bestScore = isMaximizingPlayer ? INT_MIN : INT_MAX;
     for (int y = 0; y < BOARD_LENGHT; y++) {
         for (int x = 0; x < BOARD_LENGHT; x++) {
-            if (state->board[y][x] == 0){
+            if (state->board[y][x] == 0 && something(valuable,y,x)==1){
+                counter++;
                 state->board[y][x] = isMaximizingPlayer ? 'X' : 'O';
                 int score = minimax(state, !isMaximizingPlayer, depth + 1, alpha, beta);
                 state->board[y][x] = 0;
@@ -285,7 +423,7 @@ void best_move(struct stan_gry* state){
     int best_score = INT_MIN;
     for (int i = 0; i < BOARD_LENGHT; i++) {
         for (int j = 0; j < BOARD_LENGHT; j++) {
-            if (state->board[i][j] == 0 && something(state,i,j)==1) {
+            if (state->board[i][j] == 0 && something(valuable,i,j)==1) {
                 state->board[i][j] = 'X';
                 int score = minimax(state, false, 0, INT_MIN, INT_MAX);
                 state->board[i][j] = 0;
@@ -298,6 +436,7 @@ void best_move(struct stan_gry* state){
         }
     }
     state->board[best_y][best_x] = 'X';
+    valuable[best_y][best_x] = 1;
     state->gracz = 1;
     printf("%d", counter);
 }
