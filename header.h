@@ -26,7 +26,8 @@ void print_stan_gry(struct stan_gry* stan){
            "                                                                      \n");
     printf("   ");
     for(int i = 0; i < BOARD_LENGHT * 4 + 1; i++){
-        printf("\x1b[92m-\x1b[0m");
+        if(i%4==0) printf("\x1b[92m+\x1b[0m");
+        else printf("\x1b[92m-\x1b[0m");
     }
     putchar('\n');
     for(int y = 0; y < BOARD_LENGHT; y++){
@@ -46,7 +47,8 @@ void print_stan_gry(struct stan_gry* stan){
         }
         printf("\n   ");
         for(int i = 0; i < BOARD_LENGHT * 4 + 1; i++){
-            printf("\x1b[92m-");
+            if(i%4==0) printf("\x1b[92m+");
+            else printf("\x1b[92m-");
         }
         putchar('\n');
     }
@@ -186,6 +188,7 @@ int check_winner(struct stan_gry* state){
     if(draw == BOARD_LENGHT*BOARD_LENGHT){
         return -1;
     }//remis
+    return 0;
 }
 int something(int board[BOARD_LENGHT][BOARD_LENGHT], int y, int x){
     if(x>0){
@@ -446,6 +449,19 @@ int _OOO_(struct stan_gry* stan, int atak){
     }
     return 0;
 }
+int blockandattack(struct stan_gry* stan) {
+    //Obrona
+    if(_OOO_(stan,0)==1) return 1;
+    if(OO_OO(stan,0)==1) return 1;
+    if(O_OOOlubOOO_O(stan,0)==1)return 1;
+    if(_OOOlubOOO_(stan,0)==1) return 1;
+    //Atak
+    if(_OOO_(stan,1)==1) return 1;
+    if(OO_OO(stan,1)==1) return 1;
+    if(O_OOOlubOOO_O(stan,1)==1)return 1;
+    if(_OOOlubOOO_(stan,1)==1) return 1;
+    return 0;
+}
 int evaluate(struct stan_gry* stan, int X){
     int result = 0;
     char szukana;
@@ -595,24 +611,11 @@ int evaluate(struct stan_gry* stan, int X){
     }//prawy dolny do lewy górny
     return result;
 }
-int blockandattack(struct stan_gry* stan) {
-    //Obrona
-    if(_OOO_(stan,0)==1) return 1;
-    if(OO_OO(stan,0)==1) return 1;
-    if(O_OOOlubOOO_O(stan,0)==1)return 1;
-    if(_OOOlubOOO_(stan,0)==1) return 1;
-    //Atak
-    if(_OOO_(stan,1)==1) return 1;
-    if(OO_OO(stan,1)==1) return 1;
-    if(O_OOOlubOOO_O(stan,1)==1)return 1;
-    if(_OOOlubOOO_(stan,1)==1) return 1;
-    return 0;
-}
 int minimax(struct stan_gry* state, bool isMaximizingPlayer,int depth, int alpha, int beta) {
     if (check_winner(state) == 1) {
-        return 100000-depth;
-    }else if(check_winner(state)==2){
         return depth-100000;
+    }else if(check_winner(state)==2){
+        return 100000-depth;
     }
     if(check_winner(state)==-1){
         return 0;
@@ -672,5 +675,4 @@ void best_move(struct stan_gry* state){
     state->board[best_y][best_x] = 'X';
     valuable[best_y][best_x] = 1;
     state->gracz = 1;
-    printf("\x1b[95mnodes: %d\x1b[0m", counter);
 }

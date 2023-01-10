@@ -6,12 +6,17 @@ int main(void){
         }
     }
     system("clear");
-    struct stan_gry stan = {.koniec = false, .gracz=1};
+    struct stan_gry stan = {.koniec = false, .gracz=2, .ruch=1};
     print_stan_gry(&stan);
     while(stan.koniec!=true){
-        if(stan.gracz==1){
+        if(stan.gracz == 2 && stan.ruch == 1){
+            stan.board[7][7] = 'X';
+            valuable[7][7] = 1;
+            stan.gracz = 1;
+            stan.ruch += 1;
+        } else if(stan.gracz==1){
             move(&stan);
-        } else{
+        }else{
             if(blockandattack(&stan) == 0){
                 best_move(&stan);
             }
@@ -37,6 +42,7 @@ int main(void){
                 return 0;
         }else{
             system("clear");
+            printf("\x1b[95mnodes: %d\x1b[0m", counter);
             print_stan_gry(&stan);
         }
     }
