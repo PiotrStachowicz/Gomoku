@@ -1,7 +1,5 @@
 # Gomoku (wersja konsolowa)
 ...
-
-
 ## ✔Wymagania
 
 ...

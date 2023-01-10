@@ -65,7 +65,7 @@ void print_stan_gry(struct stan_gry* stan){
 void move(struct stan_gry* state){
     int x, y;
     do {
-        printf("\x1b[92mPodaj ruch <kolumna> <wiersz>:\x1b[0m ");
+        printf("\x1b[92mRuch: <kolumna> <wiersz>:\x1b[0m ");
         if (scanf("%d %d", &x, &y) == 2 && x >= 1 && y >= 1 && x <= BOARD_LENGHT && y <= BOARD_LENGHT && state->board[y-1][x-1] == 0) {
             break;
         }
@@ -245,11 +245,13 @@ int _OOOlubOOO_(struct stan_gry* stan, int atak){
             if (stan->board[y][x] == szukana && stan->board[y][x + 1] == szukana && stan->board[y][x + 2] == szukana) {
                 if (x > 0 && stan->board[y][x - 1] == 0) {
                     stan->board[y][x - 1] = 'X';
+                    valuable[y][x-1] = 1;
                     stan->gracz = 1;
                     return 1;
                 }
                 if (x < BOARD_LENGHT - 3 && stan->board[y][x + 3] == 0) {
                     stan->board[y][x + 3] = 'X';
+                    valuable[y][x+1] = 1;
                     stan->gracz = 1;
                     return 1;
                 }
@@ -261,11 +263,13 @@ int _OOOlubOOO_(struct stan_gry* stan, int atak){
             if (stan->board[y][x] == szukana && stan->board[y + 1][x] == szukana && stan->board[y + 2][x] == szukana) {
                 if (y > 0 && stan->board[y - 1][x] == 0) {
                     stan->board[y - 1][x] = 'X';
+                    valuable[y-1][x] = 1;
                     stan->gracz = 1;
                     return 1;
                 }
                 if (y < BOARD_LENGHT - 3 && stan->board[y + 3][x] == 0) {
                     stan->board[y + 3][x] = 'X';
+                    valuable[y+3][x] = 1;
                     stan->gracz = 1;
                     return 1;
                 }
@@ -277,11 +281,13 @@ int _OOOlubOOO_(struct stan_gry* stan, int atak){
             if (stan->board[y][x] == szukana && stan->board[y + 1][x + 1] == szukana && stan->board[y + 2][x + 2] == szukana) {
                 if (y > 0 && x > 0 && stan->board[y - 1][x - 1] == 0) {
                     stan->board[y - 1][x - 1] = 'X';
+                    valuable[y-1][x-1] = 1;
                     stan->gracz = 1;
                     return 1;
                 }
                 if (y < BOARD_LENGHT - 3 && x < BOARD_LENGHT - 3 && stan->board[y + 3][x + 3] == 0) {
                     stan->board[y + 3][x + 3] = 'X';
+                    valuable[y+3][x+3] = 1;
                     stan->gracz = 1;
                     return 1;
                 }
@@ -293,11 +299,13 @@ int _OOOlubOOO_(struct stan_gry* stan, int atak){
             if (stan->board[y][x] == szukana && stan->board[y + 1][x - 1] == szukana && stan->board[y + 2][x - 2] == szukana) {
                 if (y > 0 && x < BOARD_LENGHT - 1 && stan->board[y - 1][x + 1] == 0) {
                     stan->board[y - 1][x + 1] = 'X';
+                    valuable[y-1][x+1] = 1;
                     stan->gracz = 1;
                     return 1;
                 }
                 if (y < BOARD_LENGHT - 3 && x > 1 && stan->board[y + 3][x - 3] == 0) {
                     stan->board[y + 3][x - 3] = 'X';
+                    valuable[y+3][x-3] = 1;
                     stan->gracz = 1;
                     return 1;
                 }
@@ -318,6 +326,7 @@ int OO_OO(struct stan_gry* stan, int atak){
             if (stan->board[y][x] == szukana && stan->board[y][x + 1] == 0 && stan->board[y][x + 2] == szukana) {
                 if (x > 0 && stan->board[y][x - 1] == szukana && stan->board[y][x + 3] == szukana) {
                     stan->board[y][x + 1] = 'X';
+                    valuable[y][x+1] = 1;
                     stan->gracz = 1;
                     return 1;
                 }
@@ -329,6 +338,7 @@ int OO_OO(struct stan_gry* stan, int atak){
             if (stan->board[y][x] == szukana && stan->board[y + 1][x] == 0 && stan->board[y + 2][x] == szukana) {
                 if (y > 0 && stan->board[y - 1][x] == szukana && stan->board[y + 3][x] == szukana) {
                     stan->board[y + 1][x] = 'X';
+                    valuable[y+1][x] = 1;
                     stan->gracz = 1;
                     return 1;
                 }
@@ -340,6 +350,7 @@ int OO_OO(struct stan_gry* stan, int atak){
             if (stan->board[y][x] == szukana && stan->board[y + 1][x + 1] == 0 && stan->board[y + 2][x + 2] == szukana) {
                 if (y > 0 && x > 0 && stan->board[y - 1][x - 1] == szukana && stan->board[y + 3][x + 3] == szukana) {
                     stan->board[y + 1][x + 1] = 'X';
+                    valuable[y+1][x+1] = 1;
                     stan->gracz = 1;
                     return 1;
                 }
@@ -351,6 +362,7 @@ int OO_OO(struct stan_gry* stan, int atak){
             if (stan->board[y][x] == szukana && stan->board[y + 1][x - 1] == 0 && stan->board[y + 2][x - 2] == szukana) {
                 if (y > 0 && x < BOARD_LENGHT - 1 && stan->board[y - 1][x + 1] == szukana && stan->board[y + 3][x - 3] == szukana) {
                     stan->board[y + 1][x - 1] = 'X';
+                    valuable[y+1][x-1] = 1;
                     stan->gracz = 1;
                     return 1;
                 }
@@ -370,6 +382,7 @@ int O_OOOlubOOO_O(struct stan_gry* stan, int atak){
         for (int x = 0; x < BOARD_LENGHT - 2; x++) {
             if (x > 0 && stan->board[y][x - 1] == szukana && stan->board[y][x] == 0 && stan->board[y][x + 1] == szukana && stan->board[y][x + 2] == szukana && stan->board[y][x + 3] == szukana) {
                 stan->board[y][x] = 'X';
+                valuable[y][x] = 1;
                 stan->gracz = 1;
                 return 1;
             }
@@ -379,6 +392,7 @@ int O_OOOlubOOO_O(struct stan_gry* stan, int atak){
         for (int y = 0; y < BOARD_LENGHT - 2; y++) {
             if (y > 0 && stan->board[y - 1][x] == szukana && stan->board[y][x] == szukana && stan->board[y + 1][x] == szukana && stan->board[y + 2][x] == 0 && stan->board[y + 3][x] == szukana) {
                 stan->board[y + 2][x] = 'X';
+                valuable[y+2][x] = 1;
                 stan->gracz = 1;
                 return 1;
             }
@@ -388,6 +402,7 @@ int O_OOOlubOOO_O(struct stan_gry* stan, int atak){
         for (int x = 0; x < BOARD_LENGHT - 2; x++) {
             if (y > 0 && x > 0 && stan->board[y - 1][x - 1] == szukana && stan->board[y][x] == 0 && stan->board[y + 1][x + 1] == 0 && stan->board[y + 2][x + 2] == szukana && stan->board[y + 3][x + 3] == szukana) {
                 stan->board[y][x] = 'X';
+                valuable[y][x] = 1;
                 stan->gracz = 1;
                 return 1;
             }
@@ -397,9 +412,79 @@ int O_OOOlubOOO_O(struct stan_gry* stan, int atak){
         for (int x = 2; x < BOARD_LENGHT; x++) {
             if (y > 0 && x < BOARD_LENGHT - 1 && stan->board[y - 1][x + 1] == szukana && stan->board[y][x] == szukana && stan->board[y + 1][x - 1] == szukana && stan->board[y + 2][x - 2] == 0 && stan->board[y + 3][x - 3] == szukana) {
                 stan->board[y + 2][x - 2] = 'X';
+                valuable[y+2][x-2] = 1;
                 stan->gracz = 1;
                 return 1;
             }
+        }
+    }
+    return 0;
+}
+int _O_OOlubOO_O_(struct stan_gry* stan, int atak){
+    char szukana;
+    if(atak==1){
+        szukana='X';
+    } else{
+        szukana='O';
+    }
+    for (int y = 0; y < BOARD_LENGHT; y++) {
+        for (int x = 0; x < BOARD_LENGHT - 2; x++) {
+            if (x > 0 && stan->board[y][x - 1] == 0 && stan->board[y][x] == szukana && stan->board[y][x + 1] == 0 && stan->board[y][x + 2] == szukana && stan->board[y][x + 3] == szukana) {
+                stan->board[y][x+1] = 'X';
+                valuable[y][x+1] = 1;
+                stan->gracz = 1;
+                return 1;
+            } else if(x > 0 && stan->board[y][x - 1] == szukana && stan->board[y][x] == szukana && stan->board[y][x + 1] == 0 && stan->board[y][x + 2] == szukana && stan->board[y][x + 3] == 0){
+                stan->board[y][x+1] = 'X';
+                valuable[y][x] = 1;
+                stan->gracz = 1;
+                return 1;
+            }
+        }
+    }
+    for (int x = 0; x < BOARD_LENGHT; x++) {
+        for (int y = 0; y < BOARD_LENGHT - 2; y++) {
+            if (y > 0 && stan->board[y - 1][x] == 0 && stan->board[y][x] == szukana && stan->board[y + 1][x] == 0 && stan->board[y + 2][x] == szukana && stan->board[y + 3][x] == szukana) {
+                stan->board[y + 1][x] = 'X';
+                valuable[y+1][x] = 1;
+                stan->gracz = 1;
+                return 1;
+            } else if(y > 0 && stan->board[y - 1][x] == szukana && stan->board[y][x] == 0 && stan->board[y + 1][x] == szukana && stan->board[y + 2][x] == szukana && stan->board[y + 3][x] == 0){
+                stan->board[y + 1][x] = 'X';
+                valuable[y+1][x] = 1;
+                stan->gracz = 1;
+                return 1;
+            }
+        }
+    }
+    for (int y = 0; y < BOARD_LENGHT - 2; y++) {
+        for (int x = 0; x < BOARD_LENGHT - 2; x++) {
+            if (y > 0 && x > 0 && stan->board[y - 1][x - 1] == 0 && stan->board[y][x] == szukana && stan->board[y + 1][x + 1] == 0 && stan->board[y + 2][x + 2] == szukana && stan->board[y + 3][x + 3] == szukana) {
+                stan->board[y+1][x+1] = 'X';
+                valuable[y+1][x+1] = 1;
+                stan->gracz = 1;
+                return 1;
+            } else if(y > 0 && x > 0 && stan->board[y - 1][x - 1] == szukana && stan->board[y][x] == szukana && stan->board[y + 1][x + 1] == 0 && stan->board[y + 2][x + 2] == szukana && stan->board[y + 3][x + 3] == 0){
+                stan->board[y+1][x+1] = 'X';
+                valuable[y+1][x+1] = 1;
+                stan->gracz = 1;
+                return 1;
+            }
+        }
+    }
+    for (int y = 0; y < BOARD_LENGHT - 2; y++) {
+        for (int x = 2; x < BOARD_LENGHT; x++) {
+            if (y > 0 && x < BOARD_LENGHT - 1 && stan->board[y - 1][x + 1] == 0 && stan->board[y][x] == szukana && stan->board[y + 1][x - 1] == 0 && stan->board[y + 2][x - 2] == szukana && stan->board[y + 3][x - 3] == szukana) {
+                stan->board[y +1][x - 1] = 'X';
+                valuable[y+1][x-1] = 1;
+                stan->gracz = 1;
+                return 1;
+            } else if(y > 0 && x < BOARD_LENGHT - 1 && stan->board[y - 1][x + 1] == szukana && stan->board[y][x] == szukana && stan->board[y + 1][x - 1] == 0 && stan->board[y + 2][x - 2] == szukana && stan->board[y + 3][x - 3] == 0){
+                stan->board[y +1][x - 1] = 'X';
+                valuable[y+1][x-1] = 1;
+                stan->gracz = 1;
+                return 1;
+            };
         }
     }
     return 0;
@@ -415,6 +500,7 @@ int _OOO_(struct stan_gry* stan, int atak){
         for (int x = 0; x < BOARD_LENGHT - 2; x++) {
             if (x > 0 && stan->board[y][x - 1] == 0 && stan->board[y][x] == szukana && stan->board[y][x + 1] == szukana && stan->board[y][x + 2] == szukana && stan->board[y][x + 3] == 0) {
                 stan->board[y][x-1] = 'X';
+                valuable[y][x-1] = 1;
                 stan->gracz = 1;
                 return 1;
             }
@@ -424,6 +510,7 @@ int _OOO_(struct stan_gry* stan, int atak){
         for (int y = 0; y < BOARD_LENGHT - 2; y++) {
             if (y > 0 && stan->board[y - 1][x] == 0 && stan->board[y][x] == szukana && stan->board[y + 1][x] == szukana && stan->board[y + 2][x] == szukana && stan->board[y + 3][x] == 0) {
                 stan->board[y - 1][x] = 'X';
+                valuable[y-1][x] = 1;
                 stan->gracz = 1;
                 return 1;
             }
@@ -433,6 +520,7 @@ int _OOO_(struct stan_gry* stan, int atak){
         for (int x = 0; x < BOARD_LENGHT - 2; x++) {
             if (y > 0 && x > 0 && stan->board[y - 1][x - 1] == 0 && stan->board[y][x] == szukana && stan->board[y + 1][x + 1] == szukana && stan->board[y + 2][x + 2] == szukana && stan->board[y + 3][x + 3] == 0) {
                 stan->board[y-1][x-1] = 'X';
+                valuable[y-1][x-1] = 1;
                 stan->gracz = 1;
                 return 1;
             }
@@ -442,6 +530,7 @@ int _OOO_(struct stan_gry* stan, int atak){
         for (int x = 2; x < BOARD_LENGHT; x++) {
             if (y > 0 && x < BOARD_LENGHT - 1 && stan->board[y - 1][x + 1] == 0 && stan->board[y][x] == szukana && stan->board[y + 1][x - 1] == szukana && stan->board[y + 2][x - 2] == szukana && stan->board[y + 3][x - 3] == 0) {
                 stan->board[y - 1][x + 1] = 'X';
+                valuable[y-1][x+1] = 1;
                 stan->gracz = 1;
                 return 1;
             }
@@ -451,12 +540,14 @@ int _OOO_(struct stan_gry* stan, int atak){
 }
 int blockandattack(struct stan_gry* stan) {
     //Obrona
-    if(_OOO_(stan,0)==1) return 1;
     if(OO_OO(stan,0)==1) return 1;
+    if(_O_OOlubOO_O_(stan,0)==1) return 1;
+    if(_OOO_(stan,0)==1) return 1;
     if(O_OOOlubOOO_O(stan,0)==1)return 1;
     if(_OOOlubOOO_(stan,0)==1) return 1;
     //Atak
     if(_OOO_(stan,1)==1) return 1;
+    if(_O_OOlubOO_O_(stan,1)==1) return 1;
     if(OO_OO(stan,1)==1) return 1;
     if(O_OOOlubOOO_O(stan,1)==1)return 1;
     if(_OOOlubOOO_(stan,1)==1) return 1;
@@ -612,19 +703,18 @@ int evaluate(struct stan_gry* stan, int X){
     return result;
 }
 int minimax(struct stan_gry* state, bool isMaximizingPlayer,int depth, int alpha, int beta) {
-    if (check_winner(state) == 1) {
-        return depth-100000;
-    }else if(check_winner(state)==2){
+    int k = check_winner(state);
+    if (k == 1) {
         return 100000-depth;
-    }
-    if(check_winner(state)==-1){
+    }else if(k==2){
+        return depth-100000;
+    }else if(k==-1){
         return 0;
-    }
-    if(depth == 3){
+    }else if(depth == 3){
         if(isMaximizingPlayer==true){
-            return evaluate(state,1);
+            return evaluate(state,1)-evaluate(state,0);
         } else{
-            return -evaluate(state,0);
+            return -evaluate(state,1)-evaluate(state,0);
         }
     }
     int bestScore = isMaximizingPlayer ? INT_MIN : INT_MAX;
@@ -653,7 +743,7 @@ int minimax(struct stan_gry* state, bool isMaximizingPlayer,int depth, int alpha
     }
     return bestScore;
 }
-void best_move(struct stan_gry* state){
+void best_move(struct stan_gry* state, int test){
     counter = 0;
     state->ruch += 1;
     int best_x, best_y;
@@ -674,5 +764,11 @@ void best_move(struct stan_gry* state){
     }
     state->board[best_y][best_x] = 'X';
     valuable[best_y][best_x] = 1;
+    if(test==1){
+        if(check_winner(state)==0){
+            state->board[best_y][best_x] = 0;
+            valuable[best_y][best_x] = 0;
+        }
+    }
     state->gracz = 1;
 }
