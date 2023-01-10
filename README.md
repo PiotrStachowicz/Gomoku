@@ -4,8 +4,6 @@
 - kto pierwszy ułoży **5** "kamyków" w pionie/poziomie/ukosie wygrywa.
 ## ✔Wymagania
 - **GCC compiler**
-
-
 ## ⚙️Instalacja
 `sudo apt update`
 
@@ -15,12 +13,11 @@
  
  `gcc --version`
 ## 🎮 Jak grać?
-
+1. Sklonuj repozytorium do pustego folderu używając `git clone ...`
+2. `gcc Gomoku.c`
+3. `./a.out`
 ## 👾Demo
-
 ![](https://github.com/PiotrStachowicz/Gomoku/blob/main/GIF.gif)
-
-
 ## Authors
 
 - [@PiotrStachowicz](https://www.github.com/octokatherine)
