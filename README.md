@@ -18,6 +18,7 @@
 
 ## 👾Demo
 
+![](https://github.com/PiotrStachowicz/Gomoku/blob/main/GIF.gif)
 
 
 ## Authors
