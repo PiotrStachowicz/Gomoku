@@ -10,19 +10,25 @@ int main(void){
     print_stan_gry(&stan);
     while(stan.koniec!=true){
         if(stan.gracz == 2 && stan.ruch == 1){
-            stan.board[7][7] = 'X';
-            valuable[7][7] = 1;
+            int x1,y1;
+            srand(time(0));
+            x1 = rand()%15;
+            srand(time(0));
+            y1 = rand()%15;
+            stan.board[y1][x1] = 'X';
+            valuable[y1][x1] = 1;
             stan.gracz = 1;
             stan.ruch += 1;
         } else if(stan.gracz==1){
             move(&stan);
         }else{
             struct stan_gry dummy_state = stan;
-            best_move(&stan, 1);
+            best_move(&stan);
+            struct stan_gry dummy_state2 = stan;
             if(check_winner(&stan)==0){
                 stan = dummy_state;
                 if(blockandattack(&stan)==0){
-                    best_move(&stan, 0);
+                    stan = dummy_state2;
                 }
             }
         }

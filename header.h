@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <limits.h>
 #include <math.h>
+#include <time.h>
 #define BOARD_LENGHT 15
 #define MIN(a,b) (((a)<(b))?(a):(b))
 #define MAX(a,b) (((a)>(b))?(a):(b))
@@ -62,13 +63,18 @@ void print_stan_gry(struct stan_gry* stan){
     }
     putchar('\n');
 }
+void clear (void)
+{
+    while ( getchar() != '\n' );
+}
 void move(struct stan_gry* state){
     int x, y;
     do {
         printf("\x1b[92mRuch: <kolumna> <wiersz>:\x1b[0m ");
-        if (scanf("%d %d", &x, &y) == 2 && x >= 1 && y >= 1 && x <= BOARD_LENGHT && y <= BOARD_LENGHT && state->board[y-1][x-1] == 0) {
+        if (scanf(" %d %d", &x, &y) == 2 && x >= 1 && y >= 1 && x <= BOARD_LENGHT && y <= BOARD_LENGHT && state->board[y-1][x-1] == 0) {
             break;
         }
+        clear();
     } while (true);
     state->board[y-1][x-1] = 'O';
     valuable[y-1][x-1] = 1;
@@ -538,15 +544,66 @@ int _OOO_(struct stan_gry* stan, int atak){
     }
     return 0;
 }
+int _O_O_(struct stan_gry* stan, int atak){
+    char szukana;
+    if(atak==1){
+        szukana='X';
+    } else{
+        szukana='O';
+    }
+    for (int y = 0; y < BOARD_LENGHT; y++) {
+        for (int x = 0; x < BOARD_LENGHT - 2; x++) {
+            if (x > 0 && stan->board[y][x - 1] == 0 && stan->board[y][x] == szukana && stan->board[y][x + 1] == 0 && stan->board[y][x + 2] == szukana && stan->board[y][x + 3] == 0) {
+                stan->board[y][x+1] = 'X';
+                valuable[y][x+1] = 1;
+                stan->gracz = 1;
+                return 1;
+            }
+        }
+    }
+    for (int x = 0; x < BOARD_LENGHT; x++) {
+        for (int y = 0; y < BOARD_LENGHT - 2; y++) {
+            if (y > 0 && stan->board[y - 1][x] == 0 && stan->board[y][x] == szukana && stan->board[y + 1][x] == 0 && stan->board[y + 2][x] == szukana && stan->board[y + 3][x] == 0) {
+                stan->board[y + 1][x] = 'X';
+                valuable[y+1][x] = 1;
+                stan->gracz = 1;
+                return 1;
+            }
+        }
+    }
+    for (int y = 0; y < BOARD_LENGHT - 2; y++) {
+        for (int x = 0; x < BOARD_LENGHT - 2; x++) {
+            if (y > 0 && x > 0 && stan->board[y - 1][x - 1] == 0 && stan->board[y][x] == szukana && stan->board[y + 1][x + 1] == 0 && stan->board[y + 2][x + 2] == szukana && stan->board[y + 3][x + 3] == 0) {
+                stan->board[y+1][x+1] = 'X';
+                valuable[y+1][x+1] = 1;
+                stan->gracz = 1;
+                return 1;
+            }
+        }
+    }
+    for (int y = 0; y < BOARD_LENGHT - 2; y++) {
+        for (int x = 2; x < BOARD_LENGHT; x++) {
+            if (y > 0 && x < BOARD_LENGHT - 1 && stan->board[y - 1][x + 1] == 0 && stan->board[y][x] == szukana && stan->board[y + 1][x - 1] == 0 && stan->board[y + 2][x - 2] == szukana && stan->board[y + 3][x - 3] == 0) {
+                stan->board[y + 1][x - 1] = 'X';
+                valuable[y+1][x-1] = 1;
+                stan->gracz = 1;
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
 int blockandattack(struct stan_gry* stan) {
     //Obrona
     if(OO_OO(stan,0)==1) return 1;
+    if(_O_O_(stan,0)==1) return 1;
     if(_O_OOlubOO_O_(stan,0)==1) return 1;
     if(_OOO_(stan,0)==1) return 1;
     if(O_OOOlubOOO_O(stan,0)==1)return 1;
     if(_OOOlubOOO_(stan,0)==1) return 1;
     //Atak
     if(_OOO_(stan,1)==1) return 1;
+    if(_O_O_(stan,1)==1) return 1;
     if(_O_OOlubOO_O_(stan,1)==1) return 1;
     if(OO_OO(stan,1)==1) return 1;
     if(O_OOOlubOOO_O(stan,1)==1)return 1;
@@ -743,7 +800,7 @@ int minimax(struct stan_gry* state, bool isMaximizingPlayer,int depth, int alpha
     }
     return bestScore;
 }
-void best_move(struct stan_gry* state, int test){
+void best_move(struct stan_gry* state){
     counter = 0;
     state->ruch += 1;
     int best_x, best_y;
@@ -764,11 +821,5 @@ void best_move(struct stan_gry* state, int test){
     }
     state->board[best_y][best_x] = 'X';
     valuable[best_y][best_x] = 1;
-    if(test==1){
-        if(check_winner(state)==0){
-            state->board[best_y][best_x] = 0;
-            valuable[best_y][best_x] = 0;
-        }
-    }
     state->gracz = 1;
 }
