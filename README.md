@@ -16,6 +16,7 @@
 1. Sklonuj repozytorium do pustego folderu używając `git clone ...`
 2. `gcc Gomoku.c`
 3. `./a.out`
+*Uwaga: w przeciwieństwie do konwencji, przy ruchu najpierw podajemy numer kolumny a potem wiersza***
 ## 👾Demo
 ![](https://github.com/PiotrStachowicz/Gomoku/blob/main/GIF.gif)
 ## Authors
