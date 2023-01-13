@@ -2,6 +2,7 @@
 **Go-moku** to japońska gra z VII wieku, zasady gry są bardzo proste:
 - gra rozgrywa się na planszy **15x15**,
 - kto pierwszy ułoży **5** "kamyków" w pionie/poziomie/ukosie wygrywa.
+- *Uwaga: w przeciwieństwie do konwencji, przy ruchu najpierw podajemy numer kolumny a potem wiersza*
 ## ✔Wymagania
 - **GCC compiler**
 ## ⚙️Instalacja
