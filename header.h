@@ -596,16 +596,16 @@ int _O_O_(struct stan_gry* stan, int atak){
 int blockandattack(struct stan_gry* stan) {
     //Obrona
     if(OO_OO(stan,0)==1) return 1;
+    if(_OOO_(stan,0)==1) return 1;
     if(_O_O_(stan,0)==1) return 1;
     if(_O_OOlubOO_O_(stan,0)==1) return 1;
-    if(_OOO_(stan,0)==1) return 1;
     if(O_OOOlubOOO_O(stan,0)==1)return 1;
     if(_OOOlubOOO_(stan,0)==1) return 1;
     //Atak
+    if(OO_OO(stan,1)==1) return 1;
     if(_OOO_(stan,1)==1) return 1;
     if(_O_O_(stan,1)==1) return 1;
     if(_O_OOlubOO_O_(stan,1)==1) return 1;
-    if(OO_OO(stan,1)==1) return 1;
     if(O_OOOlubOOO_O(stan,1)==1)return 1;
     if(_OOOlubOOO_(stan,1)==1) return 1;
     return 0;
