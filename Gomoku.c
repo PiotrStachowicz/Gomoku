@@ -30,6 +30,9 @@ int main(void){
                 if(blockandattack(&stan)==0){
                     stan = dummy_state2;
                 }
+                if(check_winner(&stan)==1){
+                    stan = dummy_state2;
+                }
             }
         }
         int k = check_winner(&stan);
