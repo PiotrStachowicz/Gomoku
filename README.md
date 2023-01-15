@@ -21,4 +21,4 @@
 ![](https://github.com/PiotrStachowicz/Gomoku/blob/main/GIF.gif)
 ## Authors
 
-- [@PiotrStachowicz]
+- [@PiotrStachowicz](https://github.com/octokatherine)
