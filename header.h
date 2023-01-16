@@ -769,9 +769,9 @@ int minimax(struct stan_gry* state, bool isMaximizingPlayer,int depth, int alpha
         return 0;
     }else if(depth == 3){
         if(isMaximizingPlayer==true){
-            return evaluate(state,1)-evaluate(state,0);
+            return -(evaluate(state,1));
         } else{
-            return -evaluate(state,1)-evaluate(state,0);
+            return evaluate(state,1);
         }
     }
     int bestScore = isMaximizingPlayer ? INT_MIN : INT_MAX;
