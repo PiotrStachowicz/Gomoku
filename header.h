@@ -4,13 +4,13 @@
 #include <limits.h>
 #include <math.h>
 #include <time.h>
-#define BOARD_LENGHT 15
+#define BOARD_LENGTH 15
 #define MIN(a,b) (((a)<(b))?(a):(b))
 #define MAX(a,b) (((a)>(b))?(a):(b))
 int counter;
-int valuable[BOARD_LENGHT][BOARD_LENGHT];
+int valuable[BOARD_LENGTH][BOARD_LENGTH];
 struct stan_gry{
-    int board[BOARD_LENGHT][BOARD_LENGHT];
+    int board[BOARD_LENGTH][BOARD_LENGTH];
     int gracz;
     int ruch;
     bool koniec;
@@ -26,19 +26,19 @@ void print_stan_gry(struct stan_gry* stan){
            "    \\|_______|\\|_______|\\|__|     \\|__|\\|_______|\\|__| \\|__|\\|_______|\n"
            "                                                                      \n");
     printf("   ");
-    for(int i = 0; i < BOARD_LENGHT * 4 + 1; i++){
+    for(int i = 0; i < BOARD_LENGTH * 4 + 1; i++){
         if(i%4==0) printf("\x1b[92m+\x1b[0m");
         else printf("\x1b[92m-\x1b[0m");
     }
     putchar('\n');
-    for(int y = 0; y < BOARD_LENGHT; y++){
+    for(int y = 0; y < BOARD_LENGTH; y++){
         if(y>8){
             printf("\x1b[96m%d \x1b[0m", y+1);
         }else{
             printf("\x1b[96m%d  \x1b[0m", y+1);
         }
         printf("\x1b[92m|\x1b[0m");
-        for(int x = 0; x < BOARD_LENGHT; x++){
+        for(int x = 0; x < BOARD_LENGTH; x++){
             if(stan->board[y][x]!=0){
                 if(stan->board[y][x]=='X') printf("\x1b[95m %c\x1b[92m |\x1b[0m", stan->board[y][x]);
                 if(stan->board[y][x]=='O') printf("\x1b[93m %c\x1b[92m |\x1b[0m", stan->board[y][x]);
@@ -47,14 +47,14 @@ void print_stan_gry(struct stan_gry* stan){
             }
         }
         printf("\n   ");
-        for(int i = 0; i < BOARD_LENGHT * 4 + 1; i++){
+        for(int i = 0; i < BOARD_LENGTH * 4 + 1; i++){
             if(i%4==0) printf("\x1b[92m+");
             else printf("\x1b[92m-");
         }
         putchar('\n');
     }
     printf("   ");
-    for(int i = 1; i <= BOARD_LENGHT; i++){
+    for(int i = 1; i <= BOARD_LENGTH; i++){
         if(i>9){
             printf("\x1b[96m %d \x1b[0m", i);
         } else{
@@ -71,7 +71,7 @@ void move(struct stan_gry* state){
     int x, y;
     do {
         printf("\x1b[92mRuch: <kolumna> <wiersz>:\x1b[0m ");
-        if (scanf(" %d %d", &x, &y) == 2 && x >= 1 && y >= 1 && x <= BOARD_LENGHT && y <= BOARD_LENGHT && state->board[y-1][x-1] == 0) {
+        if (scanf(" %d %d", &x, &y) == 2 && x >= 1 && y >= 1 && x <= BOARD_LENGTH && y <= BOARD_LENGTH && state->board[y - 1][x - 1] == 0) {
             break;
         }
         clear();
@@ -80,12 +80,12 @@ void move(struct stan_gry* state){
     valuable[y-1][x-1] = 1;
     state->ruch += 1;
     state->gracz = -1;
-    system("clear");
+    if(system("clear")==-1) printf("error\n");
 }
 int check_winner(struct stan_gry* state){
-    for(int y = 0; y < BOARD_LENGHT; y++){
+    for(int y = 0; y < BOARD_LENGTH; y++){
         int count = 1;
-        for(int x = 0; x < BOARD_LENGHT - 1; x++){
+        for(int x = 0; x < BOARD_LENGTH - 1; x++){
             if(state->board[y][x]==state->board[y][x+1] && (state->board[y][x]=='X' || state->board[y][x]=='O')){
                 count++;
             } else{
@@ -97,9 +97,9 @@ int check_winner(struct stan_gry* state){
             }
         }
     }//wiersze
-    for(int x = 0; x < BOARD_LENGHT; x++){
+    for(int x = 0; x < BOARD_LENGTH; x++){
         int count = 1;
-        for(int y = 0; y < BOARD_LENGHT - 1; y++){
+        for(int y = 0; y < BOARD_LENGTH - 1; y++){
             if(state->board[y][x]==state->board[y+1][x] && (state->board[y][x]=='X' || state->board[y][x]=='O')){
                 count++;
             } else{
@@ -111,7 +111,7 @@ int check_winner(struct stan_gry* state){
             }
         }
     }//kolumny
-    for(int y = 0 ;y < BOARD_LENGHT;y++){
+    for(int y = 0 ; y < BOARD_LENGTH; y++){
         int x = 0;
         int ky = y;
         int count = 1;
@@ -129,11 +129,11 @@ int check_winner(struct stan_gry* state){
             ky--;
         }
     }
-    for(int x = 0 ;x < BOARD_LENGHT;x++){
-        int y = BOARD_LENGHT-1;
+    for(int x = 0 ; x < BOARD_LENGTH; x++){
+        int y = BOARD_LENGTH - 1;
         int kx = x;
         int count = 1;
-        while (kx!=BOARD_LENGHT-1){
+        while (kx != BOARD_LENGTH - 1){
             if(state->board[y][kx]==state->board[y-1][kx+1] && (state->board[y][kx]=='X' || state->board[y][kx]=='O')){
                 count++;
             } else{
@@ -147,8 +147,8 @@ int check_winner(struct stan_gry* state){
             y--;
         }
     }//lewy dolny do prawy górny
-    for(int x = 0 ;x < BOARD_LENGHT;x++){
-        int y = BOARD_LENGHT-1;
+    for(int x = 0 ; x < BOARD_LENGTH; x++){
+        int y = BOARD_LENGTH - 1;
         int kx = x;
         int count = 1;
         while (kx!=0){
@@ -165,11 +165,11 @@ int check_winner(struct stan_gry* state){
             y--;
         }
     }
-    for(int x = 0 ;x < BOARD_LENGHT;x++){
+    for(int x = 0 ; x < BOARD_LENGTH; x++){
         int y = 0;
         int kx = x;
         int count = 1;
-        while (kx!=BOARD_LENGHT-1){
+        while (kx != BOARD_LENGTH - 1){
             if(state->board[y][kx]==state->board[y+1][kx+1] && (state->board[y][kx]=='X' || state->board[y][kx]=='O')){
                 count++;
             } else{
@@ -184,30 +184,30 @@ int check_winner(struct stan_gry* state){
         }
     }//prawy dolny do lewy górny
     int draw = 0;
-    for(int i = 0;i<BOARD_LENGHT;i++){
-        for(int j = 0;j<BOARD_LENGHT;j++){
+    for(int i = 0; i < BOARD_LENGTH; i++){
+        for(int j = 0; j < BOARD_LENGTH; j++){
             if(state->board[i][j]!=0){
                 draw++;
             }
         }
     }
-    if(draw == BOARD_LENGHT*BOARD_LENGHT){
+    if(draw == BOARD_LENGTH * BOARD_LENGTH){
         return -1;
     }//remis
     return 0;
 }
-int something(int board[BOARD_LENGHT][BOARD_LENGHT], int y, int x){
+int something(int board[BOARD_LENGTH][BOARD_LENGTH], int y, int x){
     if(x>0){
         if(board[y][x-1]!=0){
             return 1;
         }
     }//lewo
-    if(x<BOARD_LENGHT-1){
+    if(x < BOARD_LENGTH - 1){
         if(board[y][x+1]!=0){
             return 1;
         }
     }//prawo
-    if(y<BOARD_LENGHT-1){
+    if(y < BOARD_LENGTH - 1){
         if(board[y+1][x]!=0){
             return 1;
         }
@@ -222,17 +222,17 @@ int something(int board[BOARD_LENGHT][BOARD_LENGHT], int y, int x){
             return 1;
         }
     }//lewy górny
-    if(x<BOARD_LENGHT-1&&y<BOARD_LENGHT-1){
+    if(x < BOARD_LENGTH - 1 && y < BOARD_LENGTH - 1){
         if(board[y+1][x+1]!=0){
             return 1;
         }
     }//prawy dolny
-    if(x>0&&y<BOARD_LENGHT-1){
+    if(x>0&& y < BOARD_LENGTH - 1){
         if(board[y+1][x-1]!=0){
             return 1;
         }
     }//lewy dolny
-    if(x<BOARD_LENGHT-1&&y>0){
+    if(x < BOARD_LENGTH - 1 && y > 0){
         if(board[y-1][x+1]!=0){
             return 1;
         }
@@ -246,8 +246,8 @@ int _OOOlubOOO_(struct stan_gry* stan, int atak){
     } else{
         szukana='O';
     }
-    for (int y = 0; y < BOARD_LENGHT; y++) {
-        for (int x = 0; x < BOARD_LENGHT - 2; x++) {
+    for (int y = 0; y < BOARD_LENGTH; y++) {
+        for (int x = 0; x < BOARD_LENGTH - 2; x++) {
             if (stan->board[y][x] == szukana && stan->board[y][x + 1] == szukana && stan->board[y][x + 2] == szukana) {
                 if (x > 0 && stan->board[y][x - 1] == 0) {
                     stan->board[y][x - 1] = 'X';
@@ -255,7 +255,7 @@ int _OOOlubOOO_(struct stan_gry* stan, int atak){
                     stan->gracz = 1;
                     return 1;
                 }
-                if (x < BOARD_LENGHT - 3 && stan->board[y][x + 3] == 0) {
+                if (x < BOARD_LENGTH - 3 && stan->board[y][x + 3] == 0) {
                     stan->board[y][x + 3] = 'X';
                     valuable[y][x+1] = 1;
                     stan->gracz = 1;
@@ -264,8 +264,8 @@ int _OOOlubOOO_(struct stan_gry* stan, int atak){
             }
         }
     }
-    for (int x = 0; x < BOARD_LENGHT; x++) {
-        for (int y = 0; y < BOARD_LENGHT - 2; y++) {
+    for (int x = 0; x < BOARD_LENGTH; x++) {
+        for (int y = 0; y < BOARD_LENGTH - 2; y++) {
             if (stan->board[y][x] == szukana && stan->board[y + 1][x] == szukana && stan->board[y + 2][x] == szukana) {
                 if (y > 0 && stan->board[y - 1][x] == 0) {
                     stan->board[y - 1][x] = 'X';
@@ -273,7 +273,7 @@ int _OOOlubOOO_(struct stan_gry* stan, int atak){
                     stan->gracz = 1;
                     return 1;
                 }
-                if (y < BOARD_LENGHT - 3 && stan->board[y + 3][x] == 0) {
+                if (y < BOARD_LENGTH - 3 && stan->board[y + 3][x] == 0) {
                     stan->board[y + 3][x] = 'X';
                     valuable[y+3][x] = 1;
                     stan->gracz = 1;
@@ -282,8 +282,8 @@ int _OOOlubOOO_(struct stan_gry* stan, int atak){
             }
         }
     }
-    for (int y = 0; y < BOARD_LENGHT - 2; y++) {
-        for (int x = 0; x < BOARD_LENGHT - 2; x++) {
+    for (int y = 0; y < BOARD_LENGTH - 2; y++) {
+        for (int x = 0; x < BOARD_LENGTH - 2; x++) {
             if (stan->board[y][x] == szukana && stan->board[y + 1][x + 1] == szukana && stan->board[y + 2][x + 2] == szukana) {
                 if (y > 0 && x > 0 && stan->board[y - 1][x - 1] == 0) {
                     stan->board[y - 1][x - 1] = 'X';
@@ -291,7 +291,7 @@ int _OOOlubOOO_(struct stan_gry* stan, int atak){
                     stan->gracz = 1;
                     return 1;
                 }
-                if (y < BOARD_LENGHT - 3 && x < BOARD_LENGHT - 3 && stan->board[y + 3][x + 3] == 0) {
+                if (y < BOARD_LENGTH - 3 && x < BOARD_LENGTH - 3 && stan->board[y + 3][x + 3] == 0) {
                     stan->board[y + 3][x + 3] = 'X';
                     valuable[y+3][x+3] = 1;
                     stan->gracz = 1;
@@ -300,16 +300,16 @@ int _OOOlubOOO_(struct stan_gry* stan, int atak){
             }
         }
     }
-    for (int y = 0; y < BOARD_LENGHT - 2; y++) {
-        for (int x = 2; x < BOARD_LENGHT; x++) {
+    for (int y = 0; y < BOARD_LENGTH - 2; y++) {
+        for (int x = 2; x < BOARD_LENGTH; x++) {
             if (stan->board[y][x] == szukana && stan->board[y + 1][x - 1] == szukana && stan->board[y + 2][x - 2] == szukana) {
-                if (y > 0 && x < BOARD_LENGHT - 1 && stan->board[y - 1][x + 1] == 0) {
+                if (y > 0 && x < BOARD_LENGTH - 1 && stan->board[y - 1][x + 1] == 0) {
                     stan->board[y - 1][x + 1] = 'X';
                     valuable[y-1][x+1] = 1;
                     stan->gracz = 1;
                     return 1;
                 }
-                if (y < BOARD_LENGHT - 3 && x > 1 && stan->board[y + 3][x - 3] == 0) {
+                if (y < BOARD_LENGTH - 3 && x > 1 && stan->board[y + 3][x - 3] == 0) {
                     stan->board[y + 3][x - 3] = 'X';
                     valuable[y+3][x-3] = 1;
                     stan->gracz = 1;
@@ -327,10 +327,10 @@ int OO_OO(struct stan_gry* stan, int atak){
     } else{
         szukana='O';
     }
-    for (int y = 0; y < BOARD_LENGHT; y++) {
-        for (int x = 0; x < BOARD_LENGHT - 2; x++) {
+    for (int y = 0; y < BOARD_LENGTH; y++) {
+        for (int x = 0; x < BOARD_LENGTH - 2; x++) {
             if (stan->board[y][x] == szukana && stan->board[y][x + 1] == 0 && stan->board[y][x + 2] == szukana) {
-                if (x > 0 && stan->board[y][x - 1] == szukana && stan->board[y][x + 3] == szukana) {
+                if (x > 0 && stan->board[y][x - 1] == szukana && x < BOARD_LENGTH - 3 && stan->board[y][x + 3] == szukana) {
                     stan->board[y][x + 1] = 'X';
                     valuable[y][x+1] = 1;
                     stan->gracz = 1;
@@ -339,10 +339,10 @@ int OO_OO(struct stan_gry* stan, int atak){
             }
         }
     }
-    for (int x = 0; x < BOARD_LENGHT; x++) {
-        for (int y = 0; y < BOARD_LENGHT - 2; y++) {
+    for (int x = 0; x < BOARD_LENGTH; x++) {
+        for (int y = 0; y < BOARD_LENGTH - 2; y++) {
             if (stan->board[y][x] == szukana && stan->board[y + 1][x] == 0 && stan->board[y + 2][x] == szukana) {
-                if (y > 0 && stan->board[y - 1][x] == szukana && stan->board[y + 3][x] == szukana) {
+                if (y > 0 && stan->board[y - 1][x] == szukana && y < BOARD_LENGTH - 3 &&  stan->board[y + 3][x] == szukana) {
                     stan->board[y + 1][x] = 'X';
                     valuable[y+1][x] = 1;
                     stan->gracz = 1;
@@ -351,10 +351,10 @@ int OO_OO(struct stan_gry* stan, int atak){
             }
         }
     }
-    for (int y = 0; y < BOARD_LENGHT - 2; y++) {
-        for (int x = 0; x < BOARD_LENGHT - 2; x++) {
+    for (int y = 0; y < BOARD_LENGTH - 2; y++) {
+        for (int x = 0; x < BOARD_LENGTH - 2; x++) {
             if (stan->board[y][x] == szukana && stan->board[y + 1][x + 1] == 0 && stan->board[y + 2][x + 2] == szukana) {
-                if (y > 0 && x > 0 && stan->board[y - 1][x - 1] == szukana && stan->board[y + 3][x + 3] == szukana) {
+                if (y > 0 && x > 0 && stan->board[y - 1][x - 1] == szukana && x < BOARD_LENGTH - 3 && y < BOARD_LENGTH - 3 &&  stan->board[y + 3][x + 3] == szukana) {
                     stan->board[y + 1][x + 1] = 'X';
                     valuable[y+1][x+1] = 1;
                     stan->gracz = 1;
@@ -363,10 +363,10 @@ int OO_OO(struct stan_gry* stan, int atak){
             }
         }
     }
-    for (int y = 0; y < BOARD_LENGHT - 2; y++) {
-        for (int x = 2; x < BOARD_LENGHT; x++) {
+    for (int y = 0; y < BOARD_LENGTH - 2; y++) {
+        for (int x = 2; x < BOARD_LENGTH; x++) {
             if (stan->board[y][x] == szukana && stan->board[y + 1][x - 1] == 0 && stan->board[y + 2][x - 2] == szukana) {
-                if (y > 0 && x < BOARD_LENGHT - 1 && stan->board[y - 1][x + 1] == szukana && stan->board[y + 3][x - 3] == szukana) {
+                if (y > 0 && x < BOARD_LENGTH - 1 && stan->board[y - 1][x + 1] == szukana && x > 2 && y < BOARD_LENGTH - 3 && stan->board[y + 3][x - 3] == szukana) {
                     stan->board[y + 1][x - 1] = 'X';
                     valuable[y+1][x-1] = 1;
                     stan->gracz = 1;
@@ -384,9 +384,9 @@ int O_OOOlubOOO_O(struct stan_gry* stan, int atak){
     } else{
         szukana='O';
     }
-    for (int y = 0; y < BOARD_LENGHT; y++) {
-        for (int x = 0; x < BOARD_LENGHT - 2; x++) {
-            if (x > 0 && stan->board[y][x - 1] == szukana && stan->board[y][x] == 0 && stan->board[y][x + 1] == szukana && stan->board[y][x + 2] == szukana && stan->board[y][x + 3] == szukana) {
+    for (int y = 0; y < BOARD_LENGTH; y++) {
+        for (int x = 0; x < BOARD_LENGTH - 2; x++) {
+            if (x > 0 && x<BOARD_LENGTH - 3 && stan->board[y][x - 1] == szukana && stan->board[y][x] == 0 && stan->board[y][x + 1] == szukana && stan->board[y][x + 2] == szukana && stan->board[y][x + 3] == szukana) {
                 stan->board[y][x] = 'X';
                 valuable[y][x] = 1;
                 stan->gracz = 1;
@@ -394,9 +394,9 @@ int O_OOOlubOOO_O(struct stan_gry* stan, int atak){
             }
         }
     }
-    for (int x = 0; x < BOARD_LENGHT; x++) {
-        for (int y = 0; y < BOARD_LENGHT - 2; y++) {
-            if (y > 0 && stan->board[y - 1][x] == szukana && stan->board[y][x] == szukana && stan->board[y + 1][x] == szukana && stan->board[y + 2][x] == 0 && stan->board[y + 3][x] == szukana) {
+    for (int x = 0; x < BOARD_LENGTH; x++) {
+        for (int y = 0; y < BOARD_LENGTH - 2; y++) {
+            if (y > 0 && y<BOARD_LENGTH-3 && stan->board[y - 1][x] == szukana && stan->board[y][x] == szukana && stan->board[y + 1][x] == szukana && stan->board[y + 2][x] == 0 && stan->board[y + 3][x] == szukana) {
                 stan->board[y + 2][x] = 'X';
                 valuable[y+2][x] = 1;
                 stan->gracz = 1;
@@ -404,9 +404,9 @@ int O_OOOlubOOO_O(struct stan_gry* stan, int atak){
             }
         }
     }
-    for (int y = 0; y < BOARD_LENGHT - 2; y++) {
-        for (int x = 0; x < BOARD_LENGHT - 2; x++) {
-            if (y > 0 && x > 0 && stan->board[y - 1][x - 1] == szukana && stan->board[y][x] == 0 && stan->board[y + 1][x + 1] == 0 && stan->board[y + 2][x + 2] == szukana && stan->board[y + 3][x + 3] == szukana) {
+    for (int y = 0; y < BOARD_LENGTH - 2; y++) {
+        for (int x = 0; x < BOARD_LENGTH - 2; x++) {
+            if (y > 0 && x > 0 && x< BOARD_LENGTH-3 && y<BOARD_LENGTH-3 && stan->board[y - 1][x - 1] == szukana && stan->board[y][x] == 0 && stan->board[y + 1][x + 1] == 0 && stan->board[y + 2][x + 2] == szukana && stan->board[y + 3][x + 3] == szukana) {
                 stan->board[y][x] = 'X';
                 valuable[y][x] = 1;
                 stan->gracz = 1;
@@ -414,9 +414,9 @@ int O_OOOlubOOO_O(struct stan_gry* stan, int atak){
             }
         }
     }
-    for (int y = 0; y < BOARD_LENGHT - 2; y++) {
-        for (int x = 2; x < BOARD_LENGHT; x++) {
-            if (y > 0 && x < BOARD_LENGHT - 1 && stan->board[y - 1][x + 1] == szukana && stan->board[y][x] == szukana && stan->board[y + 1][x - 1] == szukana && stan->board[y + 2][x - 2] == 0 && stan->board[y + 3][x - 3] == szukana) {
+    for (int y = 0; y < BOARD_LENGTH - 2; y++) {
+        for (int x = 2; x < BOARD_LENGTH; x++) {
+            if (y > 0 && y < BOARD_LENGTH - 3 && x > 2 && x < BOARD_LENGTH - 2 && stan->board[y - 1][x + 1] == szukana && stan->board[y][x] == szukana && stan->board[y + 1][x - 1] == szukana && stan->board[y + 2][x - 2] == 0 && stan->board[y + 3][x - 3] == szukana) {
                 stan->board[y + 2][x - 2] = 'X';
                 valuable[y+2][x-2] = 1;
                 stan->gracz = 1;
@@ -433,8 +433,8 @@ int _O_OOlubOO_O_(struct stan_gry* stan, int atak){
     } else{
         szukana='O';
     }
-    for (int y = 0; y < BOARD_LENGHT; y++) {
-        for (int x = 0; x < BOARD_LENGHT - 2; x++) {
+    for (int y = 0; y < BOARD_LENGTH; y++) {
+        for (int x = 0; x < BOARD_LENGTH - 2; x++) {
             if (x > 0 && stan->board[y][x - 1] == 0 && stan->board[y][x] == szukana && stan->board[y][x + 1] == 0 && stan->board[y][x + 2] == szukana && stan->board[y][x + 3] == szukana) {
                 stan->board[y][x+1] = 'X';
                 valuable[y][x+1] = 1;
@@ -448,8 +448,8 @@ int _O_OOlubOO_O_(struct stan_gry* stan, int atak){
             }
         }
     }
-    for (int x = 0; x < BOARD_LENGHT; x++) {
-        for (int y = 0; y < BOARD_LENGHT - 2; y++) {
+    for (int x = 0; x < BOARD_LENGTH; x++) {
+        for (int y = 0; y < BOARD_LENGTH - 2; y++) {
             if (y > 0 && stan->board[y - 1][x] == 0 && stan->board[y][x] == szukana && stan->board[y + 1][x] == 0 && stan->board[y + 2][x] == szukana && stan->board[y + 3][x] == szukana) {
                 stan->board[y + 1][x] = 'X';
                 valuable[y+1][x] = 1;
@@ -463,8 +463,8 @@ int _O_OOlubOO_O_(struct stan_gry* stan, int atak){
             }
         }
     }
-    for (int y = 0; y < BOARD_LENGHT - 2; y++) {
-        for (int x = 0; x < BOARD_LENGHT - 2; x++) {
+    for (int y = 0; y < BOARD_LENGTH - 2; y++) {
+        for (int x = 0; x < BOARD_LENGTH - 2; x++) {
             if (y > 0 && x > 0 && stan->board[y - 1][x - 1] == 0 && stan->board[y][x] == szukana && stan->board[y + 1][x + 1] == 0 && stan->board[y + 2][x + 2] == szukana && stan->board[y + 3][x + 3] == szukana) {
                 stan->board[y+1][x+1] = 'X';
                 valuable[y+1][x+1] = 1;
@@ -478,14 +478,14 @@ int _O_OOlubOO_O_(struct stan_gry* stan, int atak){
             }
         }
     }
-    for (int y = 0; y < BOARD_LENGHT - 2; y++) {
-        for (int x = 2; x < BOARD_LENGHT; x++) {
-            if (y > 0 && x < BOARD_LENGHT - 1 && stan->board[y - 1][x + 1] == 0 && stan->board[y][x] == szukana && stan->board[y + 1][x - 1] == 0 && stan->board[y + 2][x - 2] == szukana && stan->board[y + 3][x - 3] == szukana) {
+    for (int y = 0; y < BOARD_LENGTH - 2; y++) {
+        for (int x = 2; x < BOARD_LENGTH; x++) {
+            if (y > 0 && x < BOARD_LENGTH - 1 && stan->board[y - 1][x + 1] == 0 && stan->board[y][x] == szukana && stan->board[y + 1][x - 1] == 0 && stan->board[y + 2][x - 2] == szukana && stan->board[y + 3][x - 3] == szukana) {
                 stan->board[y +1][x - 1] = 'X';
                 valuable[y+1][x-1] = 1;
                 stan->gracz = 1;
                 return 1;
-            } else if(y > 0 && x < BOARD_LENGHT - 1 && stan->board[y - 1][x + 1] == szukana && stan->board[y][x] == szukana && stan->board[y + 1][x - 1] == 0 && stan->board[y + 2][x - 2] == szukana && stan->board[y + 3][x - 3] == 0){
+            } else if(y > 0 && x < BOARD_LENGTH - 1 && stan->board[y - 1][x + 1] == szukana && stan->board[y][x] == szukana && stan->board[y + 1][x - 1] == 0 && stan->board[y + 2][x - 2] == szukana && stan->board[y + 3][x - 3] == 0){
                 stan->board[y +1][x - 1] = 'X';
                 valuable[y+1][x-1] = 1;
                 stan->gracz = 1;
@@ -502,9 +502,9 @@ int _OOO_(struct stan_gry* stan, int atak){
     } else{
         szukana='O';
     }
-    for (int y = 0; y < BOARD_LENGHT; y++) {
-        for (int x = 0; x < BOARD_LENGHT - 2; x++) {
-            if (x > 0 && stan->board[y][x - 1] == 0 && stan->board[y][x] == szukana && stan->board[y][x + 1] == szukana && stan->board[y][x + 2] == szukana && stan->board[y][x + 3] == 0) {
+    for (int y = 0; y < BOARD_LENGTH; y++) {
+        for (int x = 0; x < BOARD_LENGTH - 2; x++) {
+            if (x > 0 && x < BOARD_LENGTH - 3 && stan->board[y][x - 1] == 0 && stan->board[y][x] == szukana && stan->board[y][x + 1] == szukana && stan->board[y][x + 2] == szukana && stan->board[y][x + 3] == 0) {
                 stan->board[y][x-1] = 'X';
                 valuable[y][x-1] = 1;
                 stan->gracz = 1;
@@ -512,9 +512,9 @@ int _OOO_(struct stan_gry* stan, int atak){
             }
         }
     }
-    for (int x = 0; x < BOARD_LENGHT; x++) {
-        for (int y = 0; y < BOARD_LENGHT - 2; y++) {
-            if (y > 0 && stan->board[y - 1][x] == 0 && stan->board[y][x] == szukana && stan->board[y + 1][x] == szukana && stan->board[y + 2][x] == szukana && stan->board[y + 3][x] == 0) {
+    for (int x = 0; x < BOARD_LENGTH; x++) {
+        for (int y = 0; y < BOARD_LENGTH - 2; y++) {
+            if (y > 0 && y < BOARD_LENGTH - 3 && stan->board[y - 1][x] == 0 && stan->board[y][x] == szukana && stan->board[y + 1][x] == szukana && stan->board[y + 2][x] == szukana && stan->board[y + 3][x] == 0) {
                 stan->board[y - 1][x] = 'X';
                 valuable[y-1][x] = 1;
                 stan->gracz = 1;
@@ -522,8 +522,8 @@ int _OOO_(struct stan_gry* stan, int atak){
             }
         }
     }
-    for (int y = 0; y < BOARD_LENGHT - 2; y++) {
-        for (int x = 0; x < BOARD_LENGHT - 2; x++) {
+    for (int y = 0; y < BOARD_LENGTH - 2; y++) {
+        for (int x = 0; x < BOARD_LENGTH - 2; x++) {
             if (y > 0 && x > 0 && stan->board[y - 1][x - 1] == 0 && stan->board[y][x] == szukana && stan->board[y + 1][x + 1] == szukana && stan->board[y + 2][x + 2] == szukana && stan->board[y + 3][x + 3] == 0) {
                 stan->board[y-1][x-1] = 'X';
                 valuable[y-1][x-1] = 1;
@@ -532,9 +532,9 @@ int _OOO_(struct stan_gry* stan, int atak){
             }
         }
     }
-    for (int y = 0; y < BOARD_LENGHT - 2; y++) {
-        for (int x = 2; x < BOARD_LENGHT; x++) {
-            if (y > 0 && x < BOARD_LENGHT - 1 && stan->board[y - 1][x + 1] == 0 && stan->board[y][x] == szukana && stan->board[y + 1][x - 1] == szukana && stan->board[y + 2][x - 2] == szukana && stan->board[y + 3][x - 3] == 0) {
+    for (int y = 0; y < BOARD_LENGTH - 2; y++) {
+        for (int x = 2; x < BOARD_LENGTH; x++) {
+            if (y > 0 && x < BOARD_LENGTH - 1 && stan->board[y - 1][x + 1] == 0 && stan->board[y][x] == szukana && stan->board[y + 1][x - 1] == szukana && stan->board[y + 2][x - 2] == szukana && stan->board[y + 3][x - 3] == 0) {
                 stan->board[y - 1][x + 1] = 'X';
                 valuable[y-1][x+1] = 1;
                 stan->gracz = 1;
@@ -551,9 +551,9 @@ int _O_O_(struct stan_gry* stan, int atak){
     } else{
         szukana='O';
     }
-    for (int y = 0; y < BOARD_LENGHT; y++) {
-        for (int x = 0; x < BOARD_LENGHT - 2; x++) {
-            if (x > 0 && stan->board[y][x - 1] == 0 && stan->board[y][x] == szukana && stan->board[y][x + 1] == 0 && stan->board[y][x + 2] == szukana && stan->board[y][x + 3] == 0) {
+    for (int y = 0; y < BOARD_LENGTH; y++) {
+        for (int x = 0; x < BOARD_LENGTH - 2; x++) {
+            if (x > 0 && stan->board[y][x - 1] == 0 && stan->board[y][x] == szukana && x < BOARD_LENGTH - 3 && stan->board[y][x + 1] == 0 && stan->board[y][x + 2] == szukana && stan->board[y][x + 3] == 0) {
                 stan->board[y][x+1] = 'X';
                 valuable[y][x+1] = 1;
                 stan->gracz = 1;
@@ -561,9 +561,9 @@ int _O_O_(struct stan_gry* stan, int atak){
             }
         }
     }
-    for (int x = 0; x < BOARD_LENGHT; x++) {
-        for (int y = 0; y < BOARD_LENGHT - 2; y++) {
-            if (y > 0 && stan->board[y - 1][x] == 0 && stan->board[y][x] == szukana && stan->board[y + 1][x] == 0 && stan->board[y + 2][x] == szukana && stan->board[y + 3][x] == 0) {
+    for (int x = 0; x < BOARD_LENGTH; x++) {
+        for (int y = 0; y < BOARD_LENGTH - 2; y++) {
+            if (y > 0 &&  y < BOARD_LENGTH - 3 && stan->board[y - 1][x] == 0 && stan->board[y][x] == szukana && stan->board[y + 1][x] == 0 && stan->board[y + 2][x] == szukana && stan->board[y + 3][x] == 0) {
                 stan->board[y + 1][x] = 'X';
                 valuable[y+1][x] = 1;
                 stan->gracz = 1;
@@ -571,8 +571,8 @@ int _O_O_(struct stan_gry* stan, int atak){
             }
         }
     }
-    for (int y = 0; y < BOARD_LENGHT - 2; y++) {
-        for (int x = 0; x < BOARD_LENGHT - 2; x++) {
+    for (int y = 0; y < BOARD_LENGTH - 2; y++) {
+        for (int x = 0; x < BOARD_LENGTH - 2; x++) {
             if (y > 0 && x > 0 && stan->board[y - 1][x - 1] == 0 && stan->board[y][x] == szukana && stan->board[y + 1][x + 1] == 0 && stan->board[y + 2][x + 2] == szukana && stan->board[y + 3][x + 3] == 0) {
                 stan->board[y+1][x+1] = 'X';
                 valuable[y+1][x+1] = 1;
@@ -581,9 +581,9 @@ int _O_O_(struct stan_gry* stan, int atak){
             }
         }
     }
-    for (int y = 0; y < BOARD_LENGHT - 2; y++) {
-        for (int x = 2; x < BOARD_LENGHT; x++) {
-            if (y > 0 && x < BOARD_LENGHT - 1 && stan->board[y - 1][x + 1] == 0 && stan->board[y][x] == szukana && stan->board[y + 1][x - 1] == 0 && stan->board[y + 2][x - 2] == szukana && stan->board[y + 3][x - 3] == 0) {
+    for (int y = 0; y < BOARD_LENGTH - 2; y++) {
+        for (int x = 2; x < BOARD_LENGTH; x++) {
+            if (y > 0 && x < BOARD_LENGTH - 1 && stan->board[y - 1][x + 1] == 0 && stan->board[y][x] == szukana && stan->board[y + 1][x - 1] == 0 && stan->board[y + 2][x - 2] == szukana && stan->board[y + 3][x - 3] == 0) {
                 stan->board[y + 1][x - 1] = 'X';
                 valuable[y+1][x-1] = 1;
                 stan->gracz = 1;
@@ -618,54 +618,9 @@ int evaluate(struct stan_gry* stan, int X){
     } else {
         szukana = 'O';
     }
-    for(int y = 0;y<BOARD_LENGHT;y++){
-        for(int x = 0;x<BOARD_LENGHT;x++){
-            if(stan->board[y][x]==szukana)continue;
-            if(x>0){
-                if(stan->board[y][x-1]==szukana){
-                    result++;
-                }
-            }//lewo
-            if(x<BOARD_LENGHT-1){
-                if(stan->board[y][x+1]==szukana){
-                    result++;
-                }
-            }//prawo
-            if(y<BOARD_LENGHT-1){
-                if(stan->board[y+1][x]==szukana){
-                    result++;
-                }
-            }//dół
-            if(y>0){
-                if(stan->board[y-1][x]==szukana){
-                    result++;
-                }
-            }//góra
-            if(x>0&&y>0){
-                if(stan->board[y-1][x-1]==szukana){
-                    result++;
-                }
-            }//lewy górny
-            if(x<BOARD_LENGHT-1&&y<BOARD_LENGHT-1){
-                if(stan->board[y+1][x+1]==szukana){
-                    result++;
-                }
-            }//prawy dolny
-            if(x>0&&y<BOARD_LENGHT-1){
-                if(stan->board[y+1][x-1]==szukana){
-                    result++;
-                }
-            }//lewy dolny
-            if(x<BOARD_LENGHT-1&&y>0){
-                if(stan->board[y-1][x+1]==szukana){
-                    result++;
-                }
-            }//prawy górny
-        }
-    }
-    for(int y = 0; y < BOARD_LENGHT; y++){
+    for(int y = 0; y < BOARD_LENGTH; y++){
         int count = 1;
-        for(int x = 0; x < BOARD_LENGHT - 1; x++){
+        for(int x = 0; x < BOARD_LENGTH - 1; x++){
             if(stan->board[y][x]==stan->board[y][x+1] && (stan->board[y][x]==szukana)){
                 count++;
             } else{
@@ -676,9 +631,9 @@ int evaluate(struct stan_gry* stan, int X){
             }
         }
     }//wiersze
-    for(int x = 0; x < BOARD_LENGHT; x++){
+    for(int x = 0; x < BOARD_LENGTH; x++){
         int count = 1;
-        for(int y = 0; y < BOARD_LENGHT - 1; y++){
+        for(int y = 0; y < BOARD_LENGTH - 1; y++){
             if(stan->board[y][x]==stan->board[y+1][x] && (stan->board[y][x]==szukana)){
                 count++;
             } else{
@@ -689,7 +644,7 @@ int evaluate(struct stan_gry* stan, int X){
             }
         }
     }//kolumny
-    for(int y = 0 ;y < BOARD_LENGHT;y++){
+    for(int y = 0 ; y < BOARD_LENGTH; y++){
         int x = 0;
         int ky = y;
         int count = 1;
@@ -706,11 +661,11 @@ int evaluate(struct stan_gry* stan, int X){
             ky--;
         }
     }
-    for(int x = 0 ;x < BOARD_LENGHT;x++){
-        int y = BOARD_LENGHT-1;
+    for(int x = 0 ; x < BOARD_LENGTH; x++){
+        int y = BOARD_LENGTH - 1;
         int kx = x;
         int count = 1;
-        while (kx!=BOARD_LENGHT-1){
+        while (kx != BOARD_LENGTH - 1){
             if(stan->board[y][kx]==stan->board[y-1][kx+1] && (stan->board[y][x]==szukana)){
                 count++;
             } else{
@@ -723,8 +678,8 @@ int evaluate(struct stan_gry* stan, int X){
             y--;
         }
     }//lewy dolny do prawy górny
-    for(int x = 0 ;x < BOARD_LENGHT;x++){
-        int y = BOARD_LENGHT-1;
+    for(int x = 0 ; x < BOARD_LENGTH; x++){
+        int y = BOARD_LENGTH - 1;
         int kx = x;
         int count = 1;
         while (kx!=0){
@@ -740,11 +695,11 @@ int evaluate(struct stan_gry* stan, int X){
             y--;
         }
     }
-    for(int x = 0 ;x < BOARD_LENGHT;x++){
+    for(int x = 0 ; x < BOARD_LENGTH; x++){
         int y = 0;
         int kx = x;
         int count = 1;
-        while (kx!=BOARD_LENGHT-1){
+        while (kx != BOARD_LENGTH - 1){
             if(stan->board[y][kx]==stan->board[y+1][kx+1] && (stan->board[y][x]==szukana)){
                 count++;
             } else{
@@ -762,21 +717,21 @@ int evaluate(struct stan_gry* stan, int X){
 int minimax(struct stan_gry* state, bool isMaximizingPlayer,int depth, int alpha, int beta) {
     int k = check_winner(state);
     if (k == 1) {
-        return 100000-depth;
+        return (100000-depth);
     }else if(k==2){
-        return depth-100000;
+        return -(100000-depth);
     }else if(k==-1){
         return 0;
     }else if(depth == 3){
         if(isMaximizingPlayer==true){
-            return -(evaluate(state,1));
+            return (evaluate(state,1));
         } else{
-            return evaluate(state,1);
+            return -(evaluate(state,1));
         }
     }
     int bestScore = isMaximizingPlayer ? INT_MIN : INT_MAX;
-    for (int y = 0; y < BOARD_LENGHT; y++) {
-        for (int x = 0; x < BOARD_LENGHT; x++) {
+    for (int y = 0; y < BOARD_LENGTH; y++) {
+        for (int x = 0; x < BOARD_LENGTH; x++) {
             if (state->board[y][x] == 0 && something(valuable,y,x)==1){
                 counter++;
                 state->board[y][x] = isMaximizingPlayer ? 'X' : 'O';
@@ -803,10 +758,10 @@ int minimax(struct stan_gry* state, bool isMaximizingPlayer,int depth, int alpha
 void best_move(struct stan_gry* state){
     counter = 0;
     state->ruch += 1;
-    int best_x, best_y;
+    int best_x = 0, best_y = 0;
     int best_score = INT_MIN;
-    for (int i = 0; i < BOARD_LENGHT; i++) {
-        for (int j = 0; j < BOARD_LENGHT; j++) {
+    for (int i = 0; i < BOARD_LENGTH; i++) {
+        for (int j = 0; j < BOARD_LENGTH; j++) {
             if (state->board[i][j] == 0 && something(valuable,i,j)==1) {
                 state->board[i][j] = 'X';
                 int score = minimax(state, false, 0, INT_MIN, INT_MAX);

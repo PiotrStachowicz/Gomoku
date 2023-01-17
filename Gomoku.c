@@ -1,19 +1,18 @@
 #include "header.h"
 int main(void){
-    for(int i = 0;i<BOARD_LENGHT;i++){
-        for(int j = 0;j<BOARD_LENGHT;j++){
+    srand(time(0));
+    for(int i = 0; i < BOARD_LENGTH; i++){
+        for(int j = 0; j < BOARD_LENGTH; j++){
             valuable[i][j] = 0;
         }
     }
-    system("clear");
+    if(system("clear")==-1) printf("error\n");
     struct stan_gry stan = {.koniec = false, .gracz=2, .ruch=1};
     print_stan_gry(&stan);
     while(stan.koniec!=true){
         if(stan.gracz == 2 && stan.ruch == 1){
             int x1,y1;
-            srand(time(0));
             x1 = rand()%15;
-            srand(time(0));
             y1 = rand()%15;
             stan.board[y1][x1] = 'X';
             valuable[y1][x1] = 1;
@@ -25,16 +24,19 @@ int main(void){
             struct stan_gry dummy_state = stan;
             best_move(&stan);
             struct stan_gry dummy_state2 = stan;
+            best_move(&stan);
             if(check_winner(&stan)==0){
                 stan = dummy_state;
                 if(blockandattack(&stan)==0){
                     stan = dummy_state2;
                 }
+            } else{
+                stan = dummy_state2;
             }
         }
         int k = check_winner(&stan);
         if(k==1){
-            system("clear");
+            if(system("clear")==-1) printf("error\n");
             stan.koniec = true;
             print_stan_gry(&stan);
             printf("\x1b[31m\n"
@@ -48,7 +50,7 @@ int main(void){
                    "                                                              \x1b[0m\n");
             return 0;
         }else if(k==2) {
-            system("clear");
+            if(system("clear")==-1) printf("error\n");
             stan.koniec = true;
             print_stan_gry(&stan);
             printf("\x1b[36m\n"
@@ -62,7 +64,7 @@ int main(void){
                    "                                                          \x1b[0m\n");
             return 0;
         }else if(k==-1){
-            system("clear");
+            if(system("clear")==-1) printf("error\n");
             stan.koniec = true;
             print_stan_gry(&stan);
             printf("\x1b[35m\n"
@@ -76,7 +78,7 @@ int main(void){
                    "                                       \x1b[0m\n");
                 return 0;
         }else{
-            system("clear");
+            if(system("clear")==-1) printf("error\n");
             printf("\x1b[95mnodes: %d\x1b[0m", counter);
             counter=0;
             print_stan_gry(&stan);

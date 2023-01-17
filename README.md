@@ -5,6 +5,7 @@
 - *Uwaga: w przeciwieństwie do konwencji, przy ruchu najpierw podajemy numer kolumny a potem wiersza*
 ## ✔Wymagania
 - **GCC compiler**
+- **Make**
 ## ⚙️Instalacja
 `sudo apt update`
 
@@ -13,10 +14,12 @@
  `sudo apt-get install manpages-dev`
  
  `gcc --version`
+
+ `sudo apt install make`
 ## 🎮 Jak grać?
 1. Sklonuj repozytorium do pustego folderu używając `git clone ...`
-2. `gcc Gomoku.c`
-3. `./a.out`
+2. Wejdź do folderu, w którym znajduje się Makefile i użyj `make`
+3. `./output`
 ## 👾Demo
 ![](https://github.com/PiotrStachowicz/Gomoku/blob/main/GIF.gif)
 ## Authors
