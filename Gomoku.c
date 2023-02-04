@@ -1,4 +1,6 @@
 #include "header.h"
+int counter;
+int valuable[BOARD_LENGTH][BOARD_LENGTH];
 int main(void){
     srand(time(0));
     for(int i = 0; i < BOARD_LENGTH; i++){
@@ -12,8 +14,8 @@ int main(void){
     while(stan.koniec!=true){
         if(stan.gracz == 2 && stan.ruch == 1){
             int x1,y1;
-            x1 = rand()%15;
-            y1 = rand()%15;
+            x1 = 10 - (rand() % 6);
+            y1 =  10 - (rand() % 6);
             stan.board[y1][x1] = 'X';
             valuable[y1][x1] = 1;
             stan.gracz = 1;
@@ -24,8 +26,7 @@ int main(void){
             struct stan_gry dummy_state = stan;
             best_move(&stan);
             struct stan_gry dummy_state2 = stan;
-            best_move(&stan);
-            if(check_winner(&stan)==0){
+            if(evaluate(&stan,1) < evaluate(&stan, 0)){
                 stan = dummy_state;
                 if(blockandattack(&stan)==0){
                     stan = dummy_state2;
@@ -34,55 +35,7 @@ int main(void){
                 stan = dummy_state2;
             }
         }
-        int k = check_winner(&stan);
-        if(k==1){
-            if(system("clear")==-1) printf("error\n");
-            stan.koniec = true;
-            print_stan_gry(&stan);
-            printf("\x1b[31m\n"
-                   "     __     ______  _    _        _      ____   _____ _______ \n"
-                   "     \\ \\   / / __ \\| |  | |      | |    / __ \\ / ____|__   __|\n"
-                   "      \\ \\_/ / |  | | |  | |      | |   | |  | | (___    | |   \n"
-                   "       \\   /| |  | | |  | |      | |   | |  | |\\___ \\   | |   \n"
-                   "        | | | |__| | |__| |      | |___| |__| |____) |  | |   \n"
-                   "        |_|  \\____/ \\____/       |______\\____/|_____/   |_|   \n"
-                   "                                                              \n"
-                   "                                                              \x1b[0m\n");
-            return 0;
-        }else if(k==2) {
-            if(system("clear")==-1) printf("error\n");
-            stan.koniec = true;
-            print_stan_gry(&stan);
-            printf("\x1b[36m\n"
-                   "     __     ______  _    _      __          ______  _   _ \n"
-                   "     \\ \\   / / __ \\| |  | |     \\ \\        / / __ \\| \\ | |\n"
-                   "      \\ \\_/ / |  | | |  | |      \\ \\  /\\  / / |  | |  \\| |\n"
-                   "       \\   /| |  | | |  | |       \\ \\/  \\/ /| |  | | . ` |\n"
-                   "        | | | |__| | |__| |        \\  /\\  / | |__| | |\\  |\n"
-                   "        |_|  \\____/ \\____/          \\/  \\/   \\____/|_| \\_|\n"
-                   "                                                          \n"
-                   "                                                          \x1b[0m\n");
-            return 0;
-        }else if(k==-1){
-            if(system("clear")==-1) printf("error\n");
-            stan.koniec = true;
-            print_stan_gry(&stan);
-            printf("\x1b[35m\n"
-                   "      _____  _____       __          __\n"
-                   "     |  __ \\|  __ \\     /\\ \\        / /\n"
-                   "     | |  | | |__) |   /  \\ \\  /\\  / / \n"
-                   "     | |  | |  _  /   / /\\ \\ \\/  \\/ /  \n"
-                   "     | |__| | | \\ \\  / ____ \\  /\\  /   \n"
-                   "     |_____/|_|  \\_\\/_/    \\_\\/  \\/    \n"
-                   "                                       \n"
-                   "                                       \x1b[0m\n");
-                return 0;
-        }else{
-            if(system("clear")==-1) printf("error\n");
-            printf("\x1b[95mnodes: %d\x1b[0m", counter);
-            counter=0;
-            print_stan_gry(&stan);
-        }
+       update(&stan);
     }
     return 0;
 }
