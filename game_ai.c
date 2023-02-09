@@ -21,6 +21,7 @@ int evaluate(struct stan_gry* stan, int X){
         for(int x = 0; x < BOARD_LENGTH - 1; x++){
             if(stan->board[y][x]==stan->board[y][x+1] && (stan->board[y][x]==szukana)){
                 count++;
+                result += 10;
             } else{
                 count = 1;
             }
@@ -34,6 +35,7 @@ int evaluate(struct stan_gry* stan, int X){
         for(int y = 0; y < BOARD_LENGTH - 1; y++){
             if(stan->board[y][x]==stan->board[y+1][x] && (stan->board[y][x]==szukana)){
                 count++;
+                result += 10;
             } else{
                 count = 1;
             }
@@ -49,6 +51,7 @@ int evaluate(struct stan_gry* stan, int X){
         while (ky!=0){
             if(stan->board[ky][x]==stan->board[ky-1][x+1] && (stan->board[y][x]==szukana)){
                 count++;
+                result += 10;
             } else{
                 count = 1;
             }
@@ -66,6 +69,7 @@ int evaluate(struct stan_gry* stan, int X){
         while (kx != BOARD_LENGTH - 1){
             if(stan->board[y][kx]==stan->board[y-1][kx+1] && (stan->board[y][x]==szukana)){
                 count++;
+                result += 10;
             } else{
                 count = 1;
             }
@@ -83,6 +87,7 @@ int evaluate(struct stan_gry* stan, int X){
         while (kx!=0){
             if(stan->board[y][kx]==stan->board[y-1][kx-1] && (stan->board[y][x]==szukana)){
                 count++;
+                result += 10;
             } else{
                 count = 1;
             }
@@ -100,6 +105,7 @@ int evaluate(struct stan_gry* stan, int X){
         while (kx != BOARD_LENGTH - 1){
             if(stan->board[y][kx]==stan->board[y+1][kx+1] && (stan->board[y][x]==szukana)){
                 count++;
+                result += 10;
             } else{
                 count = 1;
             }
@@ -110,24 +116,24 @@ int evaluate(struct stan_gry* stan, int X){
             y++;
         }
     }//prawy dolny do lewy górny
-    if(X == 1 && patterns(stan)==1){
-        result += 150;
+    if(patterns(stan)==1){
+        result += 500;
     }
     return result;
 }
 int minimax(struct stan_gry* state, bool isMaximizingPlayer,int depth, int alpha, int beta) {
     int k = check_winner(state);
     if (k == 1) {
-        return (10000-depth);
+        return (100000-depth);
     }else if(k==2){
-        return -(10000-depth);
+        return -(100000-depth);
     }else if(k==-1){
         return 0;
-    }else if(depth == 3){
+    }else if(depth == 4){
         if(isMaximizingPlayer==true){
-            return evaluate(state,1) - evaluate(state,0);
+            return -evaluate(state,1);
         } else{
-            return -evaluate(state,1) + evaluate(state, 0);
+            return evaluate(state,1);
         }
     }
     int bestScore = isMaximizingPlayer ? INT_MIN : INT_MAX;

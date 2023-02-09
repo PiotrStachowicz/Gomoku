@@ -23,17 +23,7 @@ int main(void){
         } else if(stan.gracz==1){
             move(&stan);
         }else{
-            struct stan_gry dummy_state = stan;
             best_move(&stan);
-            struct stan_gry dummy_state2 = stan;
-            if(evaluate(&stan,1) < evaluate(&stan, 0)){
-                stan = dummy_state;
-                if(blockandattack(&stan)==0){
-                    stan = dummy_state2;
-                }
-            } else{
-                stan = dummy_state2;
-            }
         }
        update(&stan);
     }
