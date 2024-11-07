@@ -2,7 +2,7 @@ CC = gcc
 
 CFLAGS = -Wall -O3 -Wextra
 
-SRCS = board/board.c computer/evaluation/eval.c computer/computer.computer
+SRCS = board/board.c computer/evaluation/eval.c computer/computer.c
 
 OBJS = $(SRCS:.c=.o)
 
