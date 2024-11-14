@@ -192,23 +192,30 @@ check_col (int16_t col, int16_t player)
 int16_t 
 check_diagonal_1(int16_t row, int16_t col, int16_t player)
 {
-  int16_t counter = 0;
-  int16_t start_row = row > col ? row - col : 0;
-  int16_t start_col = col > row ? col - row : 0;
-
-  for (; start_row < BOARD_SIZE && start_col < BOARD_SIZE; ++start_row, ++start_col)
+  /* Iterate over all diagonals and check for win */
+  for (int16_t d = 0; d < BOARD_SIZE + BOARD_SIZE - 1; ++d)
   {
-    if (get(start_row, start_col) == player)
+    int16_t counter = 0;
+    int16_t start_row = d < BOARD_SIZE ? d : BOARD_SIZE - 1;
+    int16_t end_row = d < BOARD_SIZE ? 0 : d - BOARD_SIZE + 1; 
+
+    for (int16_t i = start_row; i <= end_row; ++i)
     {
-      counter++;
-      if (counter == WIN_CONDITION)
+      int16_t j = d - i;
+
+      if (get(i, j) == player)
       {
-        return player;
+        counter++;
+
+        if (counter == WIN_CONDITION)
+        {
+          return player;
+        }
       }
-    }
-    else
-    {
-      counter = 0;
+      else
+      {
+        counter = 0;
+      }
     }
   }
 
