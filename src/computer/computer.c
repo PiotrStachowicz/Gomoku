@@ -17,7 +17,6 @@ minimax (int16_t depth, int16_t player)
   move best_move = new_move(-1, -1, player == MAX ? INT64_MIN : INT64_MAX);
   int16_t winner = check_win(player == HUMAN_ID ? COMPUTER_ID : HUMAN_ID);
 
-  /* Check if somebody won */
   if (winner == HUMAN_ID)
   {
     return new_move(-1, -1, INT64_MIN + depth);
@@ -34,7 +33,7 @@ minimax (int16_t depth, int16_t player)
   /* Calculate score adhoc if limit reached */
   if (depth == RECCURENCE_LIMIT)
   {
-    return new_move(-1, -1, 0);
+    return new_move(-1, -1, evaluate_board());
   }
 
   /* Check all possible moves */

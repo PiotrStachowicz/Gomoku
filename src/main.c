@@ -1,29 +1,32 @@
 #include "board/board.h"
 #include "computer/computer.h"
-
+#include "computer/evaluation/eval.h"
 
 int 
 main(int argc, char* argv[])
 {
   if (argc < 3)
   {
-    fprintf(stderr, "Try: ./gomoku <difficulty: 1-4> <turn: 0/1>\n");
+    fprintf(stderr, "Usage: ./gomoku [difficulty 1-4] [turn 0-1]\n");
     exit(EXIT_FAILURE);
   }
 
   int16_t difficulty = atoi(argv[1]);
-  int16_t turn = atoi(argv[2]) == 1 ? COMPUTER_ID : HUMAN_ID;
+  int16_t turn = atoi(argv[2]) == 1 ? COMPUTER_ID : (atoi(argv[2]) == 0 ? HUMAN_ID : FAIL);
 
-  if (difficulty < 1 || difficulty > 10)
+  if (difficulty < 1 || difficulty > 10 || turn == FAIL)
   {
-    fprintf(stderr, "Warning: 1 <= <difficulty> <= 4\n");
+    fprintf(stderr, "Warning, wrong program arguments!\n");
     exit(EXIT_FAILURE);
   }
 
+  predefine_importance_board();
+
   while (1)
   {
-    if (check_win(HUMAN_ID) == HUMAN_ID || check_win(COMPUTER_ID) == COMPUTER_ID)
+    if (check_win(HUMAN_ID) == HUMAN_ID || check_win(COMPUTER_ID) == COMPUTER_ID || check_win(DRAW) == DRAW)
     {
+      fprintf(stdout, "GAME ENDED\n");
       break;
     }
 
@@ -50,23 +53,7 @@ main(int argc, char* argv[])
       */
 
       best_move = minimax(0, MAX);
-
-      if (best_move.row == -1 && best_move.col == -1)
-      {
-        fprintf(stderr, "Unexpected error while searching for computer move!\n");
-        exit(EXIT_FAILURE);
-      }
-      else
-      {
-        int16_t status = set(best_move.row, best_move.col, COMPUTER_ID);
-
-        if (status == -1)
-        {
-          fprintf(stderr, "Unexpected error while performing computer move!\n");
-          exit(EXIT_FAILURE);
-        }
-      }
-
+      set(best_move.row, best_move.col, COMPUTER_ID);
       turn = HUMAN_ID;
     }
     else
@@ -79,16 +66,12 @@ main(int argc, char* argv[])
 
         do 
         {
-          printf("Make move <[row] [col]>: ");
+          fprintf(stdout, "Make move <[row] [col]>: ");
 
         } while (scanf("%hd %hd", &row, &col) != 2);
 
-        int16_t status = set(row, col, HUMAN_ID);
-
-        if (status != -1)
-        {
+        if (set(row, col, HUMAN_ID) != FAIL)
           break;
-        }
       }
 
       turn = COMPUTER_ID;
