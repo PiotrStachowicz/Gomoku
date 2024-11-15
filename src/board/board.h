@@ -6,13 +6,13 @@
 #include "math.h"
 #include "stdlib.h"
 
-#define BOARD_SIZE 6
+#define BOARD_SIZE 7
 #define COMPUTER_ID 42
 #define HUMAN_ID 1
 #define SUCCESS 1
 #define NOTHING 0 
 #define FAIL -1
-#define WIN_CONDITION 4
+#define WIN_CONDITION 5
 #define DRAW -2
 
 extern int16_t board[BOARD_SIZE * BOARD_SIZE];
@@ -55,7 +55,7 @@ check_col (int16_t col, int16_t player);
 
 /* Checks for win in first diagonals for given player ID */
 int16_t 
-check_diagonal_1 (int16_t row, int16_t col, int16_t player);
+check_diagonal_1 (int16_t player);
 
 /* Checks for win in second diagonals for given player ID */
 int16_t

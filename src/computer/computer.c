@@ -1,5 +1,6 @@
 #include "computer.h"
 
+
 move 
 new_move(int16_t row, int16_t col, int64_t score)
 {
@@ -11,12 +12,14 @@ new_move(int16_t row, int16_t col, int64_t score)
   return result;
 }
 
+
 move
 minimax (int16_t depth, int16_t player)
 {
   move best_move = new_move(-1, -1, player == MAX ? INT64_MIN : INT64_MAX);
   int16_t winner = check_win(player == HUMAN_ID ? COMPUTER_ID : HUMAN_ID);
 
+  /* Check for end state */
   if (winner == HUMAN_ID)
   {
     return new_move(-1, -1, INT64_MIN + depth);

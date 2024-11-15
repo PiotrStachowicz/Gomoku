@@ -7,7 +7,6 @@
 #define MIN HUMAN_ID
 #define MAX COMPUTER_ID
 
-
 typedef struct 
 {
   int16_t row;

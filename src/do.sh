@@ -1,1 +1,1 @@
-gcc -Wall board/board.c computer/computer.c main.c computer/evaluation/eval.c computer/evaluation/patterns/patterns.c
+gcc -Wall -Wextra -Werror -pedantic -march=native -std=c11 -O3 board/board.c computer/computer.c main.c computer/evaluation/eval.c computer/evaluation/patterns/patterns.c

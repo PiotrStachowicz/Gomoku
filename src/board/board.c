@@ -190,7 +190,7 @@ check_col (int16_t col, int16_t player)
 
 
 int16_t 
-check_diagonal_1(int16_t row, int16_t col, int16_t player)
+check_diagonal_1(int16_t player)
 {
   /* Iterate over all diagonals and check for win */
   for (int16_t d = 0; d < BOARD_SIZE + BOARD_SIZE - 1; ++d)
@@ -279,12 +279,9 @@ check_win (int16_t player)
   }
 
   /* Check fisrt diagonals for win */
-  for (int16_t i = 0; i < BOARD_SIZE; ++i)
+  if (check_diagonal_1(player) == player)
   {
-    if (check_diagonal_1(i, i, player) == player)
-    {
-      return player;
-    }
+    return player;
   }
 
   /* Check second diagonals for win */

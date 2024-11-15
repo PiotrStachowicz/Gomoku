@@ -9,19 +9,16 @@
 #define CLOSED_THREE_SCORE 100
 #define TWO_IN_ROW_SCORE 10
 
+/* Checks if given player has some four pattern */
 int64_t
-open_four(int16_t player);
+four_pattern(int16_t player);
 
+/* Checks if given player has open three pattern */
 int64_t
-closed_four(int16_t player);
+three_pattern(int16_t player);
 
+/* Checks if given player has two in row pattern */
 int64_t
-open_three(int16_t player);
-
-int64_t
-closed_three(int16_t player);
-
-int64_t
-two_in_row(int16_t player);
+two_pattern(int16_t player);
 
 #endif
