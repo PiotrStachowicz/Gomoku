@@ -1,28 +1,32 @@
 #include "board.h"
-#include "../sys/sysfun.h"
+
 
 int16_t board[BOARD_SIZE * BOARD_SIZE];
+
 
 int16_t
 flatten (int16_t row, int16_t col)
 {
   int16_t index = row * BOARD_SIZE + col;
 
+  /* Check for illegal access */
   if (index >= BOARD_SIZE * BOARD_SIZE || index < 0)
   {
-    fprintf(stderr, "Illegal (row, col) tuple accessed!\n");
+    fprintf(stderr, "flatten error\n");
     return FAIL;
   }
 
   return index;
 }
 
+
 int16_t
 set (int16_t row, int16_t col, int16_t x)
 {
   int16_t index = flatten(row, col);
 
-  if (x == 0 || (index != FAIL && get(row, col) == 0))
+  /* Check if we can access this cell */
+  if (x == 0 || (index != FAIL && is_empty(row, col)))
   {
     board[index] = x;
     
@@ -30,37 +34,45 @@ set (int16_t row, int16_t col, int16_t x)
   }
   else
   {
+    fprintf(stderr, "set error\n");
     return FAIL;
   }
 }
+
 
 int16_t
 get (int16_t row, int16_t col)
 {
   int16_t index = flatten(row, col);
 
+  /* Check for illegal access */
   if (index != FAIL)
   {
     return board[index];
   }
 
+  fprintf(stderr, "get error\n");
   return FAIL;
 }
+
 
 int16_t
 erase (int16_t row, int16_t col)
 {
   int16_t player_id = get(row, col);
 
-  set(row, col, 0); /* This is safe, because set is safe */
+  /* Set cell to nothing */
+  set(row, col, NOTHING);
 
   return player_id;
 }
 
+
 int16_t
 is_empty(int16_t row, int16_t col) 
 {
-  if (get(row, col) == 0)
+  /* Check if cell is empty */
+  if (get(row, col) == NOTHING)
   {
     return 1;
   }
@@ -68,11 +80,22 @@ is_empty(int16_t row, int16_t col)
   return 0;
 }
 
+
+void
+sys_clear_terminal()
+{
+  /* Write escape sequence into the buffer and force it to kernel's buffer */
+  fprintf(stdout, "\033c");
+  fflush(stdout);
+}
+
+
 void
 show ()
 {
   sys_clear_terminal();
   
+  /* Iterate over cells and print them to terminal */
   for (int16_t row = 0; row < BOARD_SIZE; ++row)
   {
     for (int16_t col = 0; col < BOARD_SIZE; ++col)
@@ -87,7 +110,7 @@ show ()
       {
         printf(" X ");
       }
-      else 
+      else if (element == NOTHING)
       {
         printf(" . ");
       }
@@ -111,11 +134,13 @@ show ()
   }
 }
 
+
 int16_t
 check_row (int16_t row, int16_t player) 
 {
   int16_t counter = 0;
 
+  /* Check whole row for win */
   for (int16_t col = 0; col < BOARD_SIZE; ++col)
   {
     if (get(row, col) == player)
@@ -136,11 +161,13 @@ check_row (int16_t row, int16_t player)
   return FAIL;
 }
 
+
 int16_t
 check_col (int16_t col, int16_t player) 
 {
   int16_t counter = 0;
 
+  /* Check whole column for win */
   for (int16_t row = 0; row < BOARD_SIZE; ++row)
   {
     if (get(row, col) == player)
@@ -161,71 +188,59 @@ check_col (int16_t col, int16_t player)
   return FAIL;
 }
 
-int16_t 
-check_diagonal_1(int16_t row, int16_t col, int16_t player)
-{
-  int16_t counter = 0;
-  int16_t start_row = row > col ? row - col : 0;
-  int16_t start_col = col > row ? col - row : 0;
 
-  for (; start_row < BOARD_SIZE && start_col < BOARD_SIZE; ++start_row, ++start_col)
+int16_t 
+check_diagonal_1(int16_t player)
+{
+  /* Iterate over all diagonals and check for win */
+  for (int16_t d = 0; d < BOARD_SIZE + BOARD_SIZE - 1; ++d)
   {
-    if (get(start_row, start_col) == player)
+    int16_t counter = 0;
+    int16_t start_row = d < BOARD_SIZE ? d : BOARD_SIZE - 1;
+    int16_t end_row = d < BOARD_SIZE ? 0 : d - BOARD_SIZE + 1; 
+
+    for (int16_t i = start_row; i <= end_row; ++i)
     {
-      counter++;
-      if (counter == WIN_CONDITION)
+      int16_t j = d - i;
+
+      if (get(i, j) == player)
       {
-        return player;
+        counter++;
+
+        if (counter == WIN_CONDITION)
+        {
+          return player;
+        }
       }
-    }
-    else
-    {
-      counter = 0;
+      else
+      {
+        counter = 0;
+      }
     }
   }
 
   return FAIL;
 }
+
 
 int16_t
-check_diagonal_2 (int16_t player)
+check_diagonal_2(int16_t player)
 {
-  int16_t counter = 0;
-
-  for (int16_t row = 0; row < BOARD_SIZE; ++row)
+  /* Iterate over all diagonals and check for win */
+  for (int16_t d = 0; d < BOARD_SIZE + BOARD_SIZE - 1; ++d)
   {
-    int16_t row_copy = row;
-    counter = 0;
+    int16_t counter = 0;
+    int16_t start_row = d < BOARD_SIZE ? 0 : d - BOARD_SIZE + 1;
+    int16_t end_row = d < BOARD_SIZE ? d : BOARD_SIZE - 1; 
 
-    for (int16_t col = 0; row_copy >= 0 ; ++col, --row_copy)
+    for (int16_t i = start_row; i <= end_row; ++i)
     {
-      if (get(row_copy, col) == player)
+      int16_t j = d - i;
+
+      if (get(i, j) == player)
       {
         counter++;
-        if (counter == WIN_CONDITION)
-        {
-          return player;
-        }
-      }
-      else
-      {
-        counter = 0;
-      }
-    }
-  }
-  
-  counter = 0;
 
-  for (int16_t col = 1; col < BOARD_SIZE; ++col)
-  {
-    int16_t col_copy = col;
-    counter = 0;
-    
-    for (int16_t row = BOARD_SIZE - col; row >=0; --row, ++col_copy)
-    {
-      if (get(row, col_copy) == player)
-      {
-        counter++;
         if (counter == WIN_CONDITION)
         {
           return player;
@@ -240,10 +255,12 @@ check_diagonal_2 (int16_t player)
 
   return FAIL;
 }
+
 
 int16_t 
 check_win (int16_t player)
 {
+  /* Check all rows for win */
   for (int16_t col = 0; col < BOARD_SIZE; ++col)
   {
     if(check_row(col, player) == player)
@@ -252,6 +269,7 @@ check_win (int16_t player)
     }
   }
 
+  /* Check all columns for win */
   for (int16_t row = 0; row < BOARD_SIZE; ++row)
   {
     if (check_col(row, player) == player)
@@ -260,19 +278,19 @@ check_win (int16_t player)
     }
   }
 
-  for (int16_t i = 0; i < BOARD_SIZE; ++i)
+  /* Check fisrt diagonals for win */
+  if (check_diagonal_1(player) == player)
   {
-    if (check_diagonal_1(i, i, player) == player)
-    {
-      return player;
-    }
+    return player;
   }
 
+  /* Check second diagonals for win */
   if (check_diagonal_2(player) == player)
   {
     return player;
   }
 
+  /* Check for draw */
   for (int16_t row = 0; row < BOARD_SIZE; ++row)
   {
     for (int16_t col = 0; col < BOARD_SIZE; ++col)
