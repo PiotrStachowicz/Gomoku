@@ -7,10 +7,11 @@ main(int argc, char* argv[])
 {
   if (argc < 3)
   {
-    fprintf(stderr, "Usage: ./gomoku [difficulty 1-4] [turn 0-1]\n");
+    fprintf(stderr, "Usage: ./gomoku [difficulty 1-2] [turn 0-1]\n");
     exit(EXIT_FAILURE);
   }
 
+  /* Update game settings */
   int16_t difficulty = atoi(argv[1]);
   int16_t turn = atoi(argv[2]) == 1 ? COMPUTER_ID : (atoi(argv[2]) == 0 ? HUMAN_ID : FAIL);
 
@@ -20,16 +21,20 @@ main(int argc, char* argv[])
     exit(EXIT_FAILURE);
   }
 
+  /* Predefine the importance board for state evaluation */
   predefine_importance_board();
 
+  /* Main loop of the game */
   while (1)
   {
+    /* Check for end game state */
     if (check_win(HUMAN_ID) == HUMAN_ID || check_win(COMPUTER_ID) == COMPUTER_ID || check_win(DRAW) == DRAW)
     {
       fprintf(stdout, "GAME ENDED\n");
       break;
     }
 
+    /* Computer's turn */
     if (turn == COMPUTER_ID)
     {
       move best_move;
@@ -43,12 +48,6 @@ main(int argc, char* argv[])
       case 2:
         best_move = alfa_beta(0, INT64_MIN, INT64_MAX, MAX);
         break;
-      case 3:
-        best_move = fork_minimax(0, MAX);
-        break;
-      case 4:
-        best_move = fork_alfa_beta(0, INT64_MIN, INT64_MAX, MAX);
-        break;
       }
       */
 
@@ -56,9 +55,12 @@ main(int argc, char* argv[])
       set(best_move.row, best_move.col, COMPUTER_ID);
       turn = HUMAN_ID;
     }
+
+    /* Human's turn */
     else
     {
 
+      /* Wait for good move */
       while (1)
       {
         int16_t row;
@@ -77,6 +79,7 @@ main(int argc, char* argv[])
       turn = COMPUTER_ID;
     }
 
+    /* Print the board to the terminal */
     show();
   }
 
