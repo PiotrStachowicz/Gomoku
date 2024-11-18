@@ -6,7 +6,7 @@
 #include "math.h"
 #include "stdlib.h"
 
-#define BOARD_SIZE 7
+#define BOARD_SIZE 10
 #define COMPUTER_ID 42
 #define HUMAN_ID 1
 #define SUCCESS 1

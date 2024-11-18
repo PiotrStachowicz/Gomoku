@@ -1,6 +1,16 @@
 #include "board/board.h"
 #include "computer/computer.h"
 #include "computer/evaluation/eval.h"
+#include "unistd.h"
+#include "sys/types.h"
+#include "sys/socket.h"
+#include <stdio.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <sys/ioctl.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+
 
 int 
 main(int argc, char* argv[])
@@ -15,73 +25,128 @@ main(int argc, char* argv[])
   int16_t difficulty = atoi(argv[1]);
   int16_t turn = atoi(argv[2]) == 1 ? COMPUTER_ID : (atoi(argv[2]) == 0 ? HUMAN_ID : FAIL);
 
-  if (difficulty < 1 || difficulty > 10 || turn == FAIL)
+  if (difficulty < 1 || difficulty > 2 || turn == FAIL)
   {
     fprintf(stderr, "Warning, wrong program arguments!\n");
     exit(EXIT_FAILURE);
   }
 
-  /* Predefine the importance board for state evaluation */
-  predefine_importance_board();
+  int sv[2]; 
 
-  /* Main loop of the game */
-  while (1)
+  if (socketpair(AF_UNIX, SOCK_STREAM, 0, sv) == -1)
   {
-    /* Check for end game state */
-    if (check_win(HUMAN_ID) == HUMAN_ID || check_win(COMPUTER_ID) == COMPUTER_ID || check_win(DRAW) == DRAW)
+    perror("socketpair");
+    exit(EXIT_FAILURE);
+  }
+
+  pid_t pid = fork();
+
+  if (pid < 0)
+  {
+    perror("fork");
+    exit(EXIT_FAILURE);
+  }
+
+  /* Parent: computational backend in C */
+  if (pid) 
+  {
+    close(sv[1]);
+
+    /* Predefine the importance board for state evaluation */
+    predefine_importance_board();
+
+    /* Clear pygame trash */
+    char trash[1024];
+    if (read(sv[0], trash, sizeof(trash)) == -1)
     {
-      fprintf(stdout, "GAME ENDED\n");
-      break;
+      exit(EXIT_FAILURE);
     }
 
-    /* Computer's turn */
-    if (turn == COMPUTER_ID)
+    /* Main loop of the game */
+    while (1)
     {
       move best_move;
 
-      /*
+      /* Get move from different agents */
       switch (difficulty)
       {
       case 1:
         best_move = minimax(0, MAX);
         break;
       case 2:
-        best_move = alfa_beta(0, INT64_MIN, INT64_MAX, MAX);
+        best_move = alfa_beta(0, MAX, INT64_MIN, INT64_MAX);
+        break;
+
+      default:
+        best_move = minimax(0, MAX);
         break;
       }
-      */
 
-      best_move = minimax(0, MAX);
       set(best_move.row, best_move.col, COMPUTER_ID);
-      turn = HUMAN_ID;
-    }
 
-    /* Human's turn */
-    else
-    {
+      int send_buf[2] = {best_move.row, best_move.col};
 
-      /* Wait for good move */
-      while (1)
+      /* Send information to GUI */
+      if (write(sv[0], send_buf, sizeof(send_buf)) != sizeof(send_buf))
       {
-        int16_t row;
-        int16_t col;
-
-        do 
-        {
-          fprintf(stdout, "Make move <[row] [col]>: ");
-
-        } while (scanf("%hd %hd", &row, &col) != 2);
-
-        if (set(row, col, HUMAN_ID) != FAIL)
-          break;
+        perror("write");
+        exit(EXIT_FAILURE);
       }
 
-      turn = COMPUTER_ID;
+      /* Check for end game state */
+      if (check_win(HUMAN_ID) == HUMAN_ID || check_win(COMPUTER_ID) == COMPUTER_ID || check_win(DRAW) == DRAW)
+      {
+        fprintf(stdout, "GAME ENDED\n");
+        break;
+      }
+
+      /* Wait for valid information from user */
+      int get_buf[2];
+
+      if (read(sv[0], get_buf, sizeof(get_buf)) != sizeof(get_buf))
+      {
+        perror("read");
+        exit(EXIT_FAILURE);
+      }
+
+      if (set(get_buf[1], get_buf[0], HUMAN_ID) == FAIL)
+      {
+        exit(EXIT_FAILURE);
+      }
+
+      /* Check for end game state */
+      if (check_win(HUMAN_ID) == HUMAN_ID || check_win(COMPUTER_ID) == COMPUTER_ID || check_win(DRAW) == DRAW)
+      {
+        fprintf(stdout, "GAME ENDED\n");
+        break;
+      }
     }
 
-    /* Print the board to the terminal */
-    show();
+    close(sv[0]);
+    
   }
+
+  /* Child: GUI for user */
+  else
+  {
+    close(sv[0]);
+
+    if (dup2(sv[1], STDIN_FILENO) == -1 || dup2(sv[1], STDOUT_FILENO) == -1)
+    {
+      perror("dup2");
+      exit(EXIT_FAILURE);
+    }
+
+    /* Run GUI */
+    char board_size_str[10];
+    snprintf(board_size_str, sizeof(board_size_str), "%d", BOARD_SIZE);
+
+    execlp("python3", "gui", "../gui/ui.py", board_size_str, NULL);
+
+    perror("execlp");
+    exit(EXIT_FAILURE);
+  }
+
 
   exit(EXIT_SUCCESS);
 }

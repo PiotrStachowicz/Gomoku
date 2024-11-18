@@ -198,12 +198,11 @@ check_diagonal_1(int16_t player)
     int16_t counter = 0;
     int16_t start_row = d < BOARD_SIZE ? d : BOARD_SIZE - 1;
     int16_t end_row = d < BOARD_SIZE ? 0 : d - BOARD_SIZE + 1; 
+    int16_t col = d < BOARD_SIZE ? BOARD_SIZE - 1 : BOARD_SIZE + (BOARD_SIZE - d - 2);
 
-    for (int16_t i = start_row; i <= end_row; ++i)
+    for (int16_t i = start_row; i >= end_row; --i, --col)
     {
-      int16_t j = d - i;
-
-      if (get(i, j) == player)
+      if (get(i, col) == player)
       {
         counter++;
 
