@@ -6,7 +6,7 @@ four_pattern(int16_t player)
   int64_t score = 0;
   for (int16_t row = 0; row < BOARD_SIZE; ++row)
   {
-     /* Check whole row for win */
+     /* Check whole row for pattern */
     for (int16_t col = 0; col + 5 < BOARD_SIZE; ++col)
     {
       if (get(row, col) == NOTHING && get(row, col + 1) == player && get(row, col + 2) == player &&
@@ -21,7 +21,7 @@ four_pattern(int16_t player)
 
   for (int16_t col = 0; col < BOARD_SIZE; ++col)
   {
-    /* Check whole column for win */
+    /* Check whole column for pattern */
     for (int16_t row = 0; row + 5 < BOARD_SIZE; ++row)
     {
       if (get(row, col) == NOTHING && get(row + 1, col) == player && get(row + 2, col) == player &&
@@ -34,7 +34,7 @@ four_pattern(int16_t player)
     }
   }     
 
-  /* Iterate over all first diagonals and check for win */
+  /* Iterate over all first diagonals and check for pattern */
   for (int16_t d = 0; d < BOARD_SIZE + BOARD_SIZE - 1; ++d) 
   {
     int16_t start_row = d < BOARD_SIZE ? 0 : d - BOARD_SIZE + 1 ;
@@ -54,7 +54,7 @@ four_pattern(int16_t player)
     }
   }
 
-  /* Iterate over all second diagonals and check for win */
+  /* Iterate over all second diagonals and check for pattern */
   for (int16_t d = 0; d < BOARD_SIZE + BOARD_SIZE - 1; ++d)
   {
     int16_t start_row = d < BOARD_SIZE ? 0 : d - BOARD_SIZE + 1;
@@ -74,7 +74,7 @@ four_pattern(int16_t player)
     }
   }
 
-  return 0;
+  return score;
 }
 
 
@@ -84,7 +84,7 @@ three_pattern(int16_t player)
   int64_t score = 0;
   for (int16_t row = 0; row < BOARD_SIZE; ++row)
   {
-     /* Check whole row for win */
+     /* Check whole row for pattern */
     for (int16_t col = 0; col + 4 < BOARD_SIZE; ++col)
     {
       if (get(row, col) == NOTHING && get(row, col + 1) == player && get(row, col + 2) == player &&
@@ -99,7 +99,7 @@ three_pattern(int16_t player)
 
   for (int16_t col = 0; col < BOARD_SIZE; ++col)
   {
-    /* Check whole column for win */
+    /* Check whole column for pattern */
     for (int16_t row = 0; row + 4 < BOARD_SIZE; ++row)
     {
       if (get(row, col) == NOTHING && get(row + 1, col) == player && get(row + 2, col) == player &&
@@ -112,7 +112,7 @@ three_pattern(int16_t player)
     }
   }     
 
-  /* Iterate over all first diagonals and check for win */
+  /* Iterate over all first diagonals and check for pattern */
   for (int16_t d = 0; d < BOARD_SIZE + BOARD_SIZE - 1; ++d) 
   {
     int16_t start_row = d < BOARD_SIZE ? 0 : d - BOARD_SIZE + 1 ;
@@ -132,7 +132,7 @@ three_pattern(int16_t player)
     }
   }
 
-  /* Iterate over all second diagonals and check for win */
+  /* Iterate over all second diagonals and check for pattern */
   for (int16_t d = 0; d < BOARD_SIZE + BOARD_SIZE - 1; ++d)
   {
     int16_t start_row = d < BOARD_SIZE ? 0 : d - BOARD_SIZE + 1;
@@ -152,7 +152,7 @@ three_pattern(int16_t player)
     }
   }
 
-  return 0;
+  return score;
 }
 
 
@@ -162,7 +162,7 @@ two_pattern(int16_t player)
   int64_t score = 0;
   for (int16_t row = 0; row < BOARD_SIZE; ++row)
   {
-     /* Check whole row for win */
+     /* Check whole row for pattern */
     for (int16_t col = 0; col + 2 < BOARD_SIZE; ++col)
     {
       if (get(row, col) == player && get(row, col + 1) == player)
@@ -172,7 +172,7 @@ two_pattern(int16_t player)
 
   for (int16_t col = 0; col < BOARD_SIZE; ++col)
   {
-    /* Check whole column for win */
+    /* Check whole column for pattern */
     for (int16_t row = 0; row + 2 < BOARD_SIZE; ++row)
     {
       if (get(row, col) == player && get(row + 1, col) == player)
@@ -180,7 +180,7 @@ two_pattern(int16_t player)
     }
   }     
 
-  /* Iterate over all first diagonals and check for win */
+  /* Iterate over all first diagonals and check for pattern */
   for (int16_t d = 0; d < BOARD_SIZE + BOARD_SIZE - 1; ++d) 
   {
     int16_t start_row = d < BOARD_SIZE ? 0 : d - BOARD_SIZE + 1 ;
@@ -195,7 +195,7 @@ two_pattern(int16_t player)
     }
   }
 
-  /* Iterate over all second diagonals and check for win */
+  /* Iterate over all second diagonals and check for pattern */
   for (int16_t d = 0; d < BOARD_SIZE + BOARD_SIZE - 1; ++d)
   {
     int16_t start_row = d < BOARD_SIZE ? 0 : d - BOARD_SIZE + 1;
@@ -210,5 +210,5 @@ two_pattern(int16_t player)
     }
   }
 
-  return 0;
+  return score;
 }

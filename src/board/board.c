@@ -2,7 +2,7 @@
 
 
 int16_t board[BOARD_SIZE * BOARD_SIZE];
-
+int16_t heuristic_filter[BOARD_SIZE * BOARD_SIZE];
 
 int16_t
 flatten (int16_t row, int16_t col)
@@ -12,7 +12,6 @@ flatten (int16_t row, int16_t col)
   /* Check for illegal access */
   if (index >= BOARD_SIZE * BOARD_SIZE || index < 0)
   {
-    fprintf(stderr, "flatten error\n");
     return FAIL;
   }
 
@@ -23,7 +22,7 @@ flatten (int16_t row, int16_t col)
 int16_t
 set (int16_t row, int16_t col, int16_t x)
 {
-  int16_t index = flatten(row, col);
+  int16_t index = flatten(row, col);  
 
   /* Check if we can access this cell */
   if (x == 0 || (index != FAIL && is_empty(row, col)))
@@ -198,12 +197,11 @@ check_diagonal_1(int16_t player)
     int16_t counter = 0;
     int16_t start_row = d < BOARD_SIZE ? d : BOARD_SIZE - 1;
     int16_t end_row = d < BOARD_SIZE ? 0 : d - BOARD_SIZE + 1; 
+    int16_t col = d < BOARD_SIZE ? BOARD_SIZE - 1 : BOARD_SIZE + (BOARD_SIZE - d - 2);
 
-    for (int16_t i = start_row; i <= end_row; ++i)
+    for (int16_t i = start_row; i >= end_row; --i, --col)
     {
-      int16_t j = d - i;
-
-      if (get(i, j) == player)
+      if (get(i, col) == player)
       {
         counter++;
 

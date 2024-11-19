@@ -3,7 +3,7 @@
 
 #include "../board/board.h"
 #include "evaluation/eval.h"
-#define RECCURENCE_LIMIT 4
+#define RECCURENCE_LIMIT 2
 #define MIN HUMAN_ID
 #define MAX COMPUTER_ID
 
