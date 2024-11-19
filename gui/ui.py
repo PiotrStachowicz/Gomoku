@@ -6,10 +6,11 @@ import numpy as np
 import struct
 
 # Window settings
-WINDOW_WIDTH = 1600
-WINDOW_HEIGHT = 1600
+WINDOW_WIDTH = 1200
+WINDOW_HEIGHT = 1200
 MARGIN = 200
 BOARD_SIZE = int(sys.argv[1])
+turn = int(sys.argv[2])
 SQUARE_SIZE = (WINDOW_HEIGHT - MARGIN - MARGIN) // BOARD_SIZE
 HUMAN_ID = 1
 COMPUTER_ID = 42
@@ -18,13 +19,22 @@ COMPUTER_ID = 42
 BACKGROUND_COLOUR = (255, 253, 208)
 BOARD_COLOUR = (217, 186, 140)
 GRID_COLOUR = (211, 211, 211)
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
 
 # Setup
 pygame.init()
+pygame.font.init()
+font = pygame.font.SysFont('Comic Sans MS', 30)
 screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 clock = pygame.time.Clock()
 execute = True
-can_play = False
+
+if turn == HUMAN_ID:
+  can_play = True
+else:
+  can_play = False
+  
 pygame.display.set_caption("Gomoku")
 
 board = [[0 for _ in range(BOARD_SIZE)] for _ in range(BOARD_SIZE)]
@@ -48,14 +58,29 @@ def get_user_move(event):
   return row, col
 
 # Draw board
-def draw_board():
+def draw_board():        
+  # Board
   pygame.draw.rect(screen, BOARD_COLOUR, (MARGIN, MARGIN, BOARD_SIZE * SQUARE_SIZE, BOARD_SIZE * SQUARE_SIZE))
+  
+  # Grid lines
+  for i in range(0, BOARD_SIZE):
+    text = font.render(str(i + 1), False, BLACK)
+    screen.blit(text, (MARGIN - 5 + i * SQUARE_SIZE + SQUARE_SIZE // 2, MARGIN - 30))
+    pygame.draw.line(screen, BLACK, (MARGIN + i * SQUARE_SIZE + SQUARE_SIZE // 2, MARGIN), (MARGIN + i * SQUARE_SIZE + SQUARE_SIZE // 2, WINDOW_HEIGHT - MARGIN))
+  
+  for i in range(0, BOARD_SIZE):
+    text = font.render(str(i + 1), False, BLACK)
+    screen.blit(text, (MARGIN - 30, MARGIN - 10 + i * SQUARE_SIZE + SQUARE_SIZE // 2))
+    pygame.draw.line(screen, BLACK, (MARGIN, MARGIN + i * SQUARE_SIZE + SQUARE_SIZE // 2), (WINDOW_WIDTH - MARGIN, MARGIN + i * SQUARE_SIZE + SQUARE_SIZE // 2))
+    
+  # Players
   for row in range(BOARD_SIZE):
     for col in range(BOARD_SIZE):
       if board[row][col] == HUMAN_ID:
-        pygame.draw.rect(screen, (255, 255, 255), (MARGIN + row * SQUARE_SIZE, MARGIN + col * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE))
+        pygame.draw.circle(screen, WHITE, (MARGIN + row * SQUARE_SIZE + SQUARE_SIZE // 2, MARGIN + col * SQUARE_SIZE + SQUARE_SIZE // 2), SQUARE_SIZE // 4)
       elif board[row][col] == COMPUTER_ID:
-        pygame.draw.rect(screen, (0, 0, 0), (MARGIN + row * SQUARE_SIZE, MARGIN + col * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE))
+        pygame.draw.circle(screen, BLACK, (MARGIN + row * SQUARE_SIZE + SQUARE_SIZE // 2, MARGIN + col * SQUARE_SIZE + SQUARE_SIZE // 2), SQUARE_SIZE // 4)
+      
 
 # Main loop of the game
 while execute:
@@ -83,7 +108,6 @@ while execute:
   # Read computer output
   computer_move = sys.stdin.read(8)
 
-  
   if computer_move:
     computer_move_bytes = computer_move.encode('utf-8')
     coordinates = np.frombuffer(computer_move_bytes, dtype=np.int32)

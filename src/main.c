@@ -4,13 +4,13 @@
 #include "unistd.h"
 #include "sys/types.h"
 #include "sys/socket.h"
-#include <stdio.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <sys/ioctl.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-
+#include "stdio.h"
+#include "unistd.h"
+#include "fcntl.h"
+#include "sys/ioctl.h"
+#include "sys/socket.h"
+#include "netinet/in.h"
+#include "time.h"
 
 int 
 main(int argc, char* argv[])
@@ -67,61 +67,73 @@ main(int argc, char* argv[])
     {
       move best_move;
 
-      /* Get move from different agents */
-      switch (difficulty)
+      /* Computer's move */
+      if (turn == COMPUTER_ID)
       {
-      case 1:
-        best_move = minimax(0, MAX);
-        break;
-      case 2:
-        best_move = alfa_beta(0, MAX, INT64_MIN, INT64_MAX);
-        break;
+         /* Get move from different agents */
+        switch (difficulty)
+        {
+        case 1:
+          best_move = minimax(0, MAX);
+          break;
+        case 2:
+          best_move = alfa_beta(0, MAX, INT64_MIN, INT64_MAX);
+          break;
 
-      default:
-        best_move = minimax(0, MAX);
-        break;
+        default:
+          best_move = minimax(0, MAX);
+          break;
+        }
+
+        set(best_move.row, best_move.col, COMPUTER_ID);
+
+        int send_buf[2] = {best_move.row, best_move.col};
+
+        /* Send information to GUI */
+        if (write(sv[0], send_buf, sizeof(send_buf)) != sizeof(send_buf))
+        {
+          perror("write");
+          exit(EXIT_FAILURE);
+        }
+
+        /* Check for end game state */
+        if (check_win(HUMAN_ID) == HUMAN_ID || check_win(COMPUTER_ID) == COMPUTER_ID || check_win(DRAW) == DRAW)
+        {
+          fprintf(stdout, "GAME ENDED\n");
+          break;
+        }
+
+        turn = HUMAN_ID;
       }
-
-      set(best_move.row, best_move.col, COMPUTER_ID);
-
-      int send_buf[2] = {best_move.row, best_move.col};
-
-      /* Send information to GUI */
-      if (write(sv[0], send_buf, sizeof(send_buf)) != sizeof(send_buf))
+      /* Human's turn */
+      else
       {
-        perror("write");
-        exit(EXIT_FAILURE);
-      }
+        /* Wait for valid information from user */
+        int get_buf[2];
 
-      /* Check for end game state */
-      if (check_win(HUMAN_ID) == HUMAN_ID || check_win(COMPUTER_ID) == COMPUTER_ID || check_win(DRAW) == DRAW)
-      {
-        fprintf(stdout, "GAME ENDED\n");
-        break;
-      }
+        if (read(sv[0], get_buf, sizeof(get_buf)) != sizeof(get_buf))
+        {
+          perror("read");
+          exit(EXIT_FAILURE);
+        }
 
-      /* Wait for valid information from user */
-      int get_buf[2];
+        if (set(get_buf[1], get_buf[0], HUMAN_ID) == FAIL)
+        {
+          exit(EXIT_FAILURE);
+        }
 
-      if (read(sv[0], get_buf, sizeof(get_buf)) != sizeof(get_buf))
-      {
-        perror("read");
-        exit(EXIT_FAILURE);
-      }
+        /* Check for end game state */
+        if (check_win(HUMAN_ID) == HUMAN_ID || check_win(COMPUTER_ID) == COMPUTER_ID || check_win(DRAW) == DRAW)
+        {
+          fprintf(stdout, "GAME ENDED\n");
+          break;
+        }
 
-      if (set(get_buf[1], get_buf[0], HUMAN_ID) == FAIL)
-      {
-        exit(EXIT_FAILURE);
-      }
-
-      /* Check for end game state */
-      if (check_win(HUMAN_ID) == HUMAN_ID || check_win(COMPUTER_ID) == COMPUTER_ID || check_win(DRAW) == DRAW)
-      {
-        fprintf(stdout, "GAME ENDED\n");
-        break;
+        turn = COMPUTER_ID;
       }
     }
-
+    /* Sleep for 5 seconds */
+    sleep(5);
     close(sv[0]);
     
   }
@@ -138,11 +150,14 @@ main(int argc, char* argv[])
     }
 
     /* Run GUI */
-    char board_size_str[10];
+    char board_size_str[4];
     snprintf(board_size_str, sizeof(board_size_str), "%d", BOARD_SIZE);
+    char turn_str[4];
+    snprintf(turn_str, sizeof(turn_str), "%d", turn);
 
-    execlp("python3", "gui", "../gui/ui.py", board_size_str, NULL);
+    char* args[] = {"gui", "../gui/ui.py", board_size_str, turn_str, NULL};
 
+    execlp("python3", args[0], args[1], args[2], args[3], args[4]);
     perror("execlp");
     exit(EXIT_FAILURE);
   }

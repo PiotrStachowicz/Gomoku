@@ -2,7 +2,7 @@
 
 
 int16_t board[BOARD_SIZE * BOARD_SIZE];
-
+int16_t heuristic_filter[BOARD_SIZE * BOARD_SIZE];
 
 int16_t
 flatten (int16_t row, int16_t col)
@@ -12,7 +12,6 @@ flatten (int16_t row, int16_t col)
   /* Check for illegal access */
   if (index >= BOARD_SIZE * BOARD_SIZE || index < 0)
   {
-    fprintf(stderr, "flatten error\n");
     return FAIL;
   }
 
@@ -23,7 +22,7 @@ flatten (int16_t row, int16_t col)
 int16_t
 set (int16_t row, int16_t col, int16_t x)
 {
-  int16_t index = flatten(row, col);
+  int16_t index = flatten(row, col);  
 
   /* Check if we can access this cell */
   if (x == 0 || (index != FAIL && is_empty(row, col)))

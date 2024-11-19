@@ -2,7 +2,6 @@
 
 int16_t importance_board[BOARD_SIZE * BOARD_SIZE];
 
-
 int64_t
 evaluate_board()
 {

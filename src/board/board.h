@@ -6,7 +6,7 @@
 #include "math.h"
 #include "stdlib.h"
 
-#define BOARD_SIZE 10
+#define BOARD_SIZE 15
 #define COMPUTER_ID 42
 #define HUMAN_ID 1
 #define SUCCESS 1
@@ -16,6 +16,7 @@
 #define DRAW -2
 
 extern int16_t board[BOARD_SIZE * BOARD_SIZE];
+extern int16_t heuristic_filter[BOARD_SIZE * BOARD_SIZE];
 
 /* Flattens 2D (row, col) access into 1D array */
 int16_t
